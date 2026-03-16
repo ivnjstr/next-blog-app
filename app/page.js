@@ -1,9 +1,16 @@
+'use client'
+// This is a client component, it can use hooks and other client-side features
+
+import BlogItem from "@/Components/BlogItem";
+import BlogList from "@/Components/BlogList";
 import Header from "@/Components/Header";
 
 export default function Home() {
   return (
     <>
       <Header />
+      {/* <BlogItem /> */}
+      <BlogList />
     </>
   );
 }

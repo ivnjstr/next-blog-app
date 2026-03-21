@@ -2,7 +2,7 @@
 
 import { connectDB } from "@/lib/config/db";
 import BlogModel from "@/lib/models/BlogModel";
-import {writeFile} from 'fs/promises'; // - this will be used to write the image file in the public folder
+import { writeFile } from 'fs/promises'; // - this will be used to write the image file in the public folder
 const { NextResponse } = require("next/server");
 
 const LoadDB = async () => {
@@ -13,16 +13,44 @@ const LoadDB = async () => {
 LoadDB();
 
 
-//first we will check if out api are working or not
+
+// //API ENDPOINT TO GET ALL BLOGS
+// //first we will check if out api are working or not
+// export async function GET(request) {
+//     //await connectDB(); 
+//     //so whenever we will send the get req on this route this function will be ewxecuted
+//     console.log('GET request received on /api/blog route'); // - this printed in terminal
+//     return NextResponse.json({ message: 'API Working' }); // - this printed in postman
+// }
+
+// //then export the function to use it in our application
+
+
+//API ENDPOINT TO GET ALL BLOGS
 export async function GET(request) {
-    //await connectDB(); 
-    //so whenever we will send the get req on this route this function will be ewxecuted
-    console.log('GET request received on /api/blog route'); // - this printed in terminal
-    return NextResponse.json({ message: 'API Working' }); // - this printed in postman
+    try {
+        const blogId = request.nextUrl.searchParams.get("id");
+        if (blogId) { //if we are sending the blogId from the frontend then display the particular blog data
+            const blog = await BlogModel.findById(blogId);
+            return NextResponse.json(blog); //if we  send the blog id we will return the particular blog in this response
+        } else {
+            const blogs = await BlogModel.find({});
+            return NextResponse.json({ blogs });
+        } // if we are not sending any blog id then we will return all the blog data in response
+
+        
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    }
+
+    //now using this data we will display the blog in homepage
 }
 
-//then export the function to use it in our application
 
+
+
+//API ENDPOINT FOR UPLOADING BLOGS
 //create api for storing the blog data in the mongo db using the post req on this route
 export async function POST(request) {
 
@@ -47,8 +75,8 @@ export async function POST(request) {
         description: `${formData.get('description')}`,
         category: `${formData.get('category')}`,
         author: `${formData.get('author')}`,
-        image:`${imageUrl}`,
-        authorImage:`${formData.get('authorImage')}`
+        image: `${imageUrl}`,
+        authorImage: `${formData.get('authorImage')}`
     }
     //we will use this blogdata to store in db
 
@@ -57,5 +85,5 @@ export async function POST(request) {
 
 
 
-    return NextResponse.json({success:true,msg:"Blog Added!"});
+    return NextResponse.json({ success: true, msg: "Blog Added!" });
 }

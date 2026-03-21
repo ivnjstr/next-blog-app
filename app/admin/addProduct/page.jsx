@@ -1,7 +1,9 @@
 'use client'
 import { assets } from '@/Assets/assets'
+import axios from 'axios'
 import Image from 'next/image'
 import React, { useState } from 'react'
+import { toast } from 'react-toastify'
 
 const page = () => {
     const [image, setImage] = useState(false);
@@ -13,10 +15,10 @@ const page = () => {
         authorImage: "/author_img.png"
     })
 
-    const onChangeHandler = (event) =>{
+    const onChangeHandler = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        setData(data=>({...data,[name]:value}));
+        setData(data => ({ ...data, [name]: value }));
         console.log(data)
     }
 
@@ -26,6 +28,35 @@ const page = () => {
         //using that api we can store data in our mongo db database
         // for that we will create one form data that will send in our backend
         // because in our api route we have accepting rthe data usiung the Formdata
+
+        const formData = new FormData();
+        formData.append('title', data.title); //data form the title field will be stored in this formData
+        formData.append('description', data.description);
+        formData.append('category', data.category);
+        formData.append('author', data.author);
+        formData.append('authorImage', data.authorImage);
+        formData.append('image', image);
+        //send this formdata in our API
+        // we will use the axios
+        const response = await axios.post('/api/blog', formData);
+        if (response.data.success) {
+            //the use the toastify notification
+            toast.success(response.data.msg)
+            // add logic where if success reset all the field
+            setImage(false);
+            setData({
+                title: "",
+                description: "",
+                category: "Startup",
+                author: "Alex something",
+                authorImage: "/author_img.png"
+            })
+        }
+        else {
+            toast.error("Error");
+        }
+
+        //Note: in toastify copy the import statement here https://www.npmjs.com/package/react-toastify
     }
 
     //Purpose of onChangeHandler link to all input field

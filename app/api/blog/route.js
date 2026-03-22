@@ -56,59 +56,101 @@ export async function GET(request) {
 
 //API ENDPOINT FOR UPLOADING BLOGS
 //create api for storing the blog data in the mongo db using the post req on this route
+// export async function POST(request) {
+
+//     const formData = await request.formData(); // - this will get the form data from the request
+//     const timestamp = Date.now(); // - this will get the current timestamp for rename in images
+
+//     //extract the image from the form data
+//     const image = formData.get('image'); // - this will get the image from the form data
+//     //using this store the image in the public folder and rename it with the timestamp to avoid name conflicts
+
+//     // UPDATE USE THIS FOR LOCAL
+//     // const imageByteData = await image.arrayBuffer(); // - this will get the byte data of the image
+//     // const buffer = Buffer.from(imageByteData); // - this will convert the byte data to buffer
+//     // const path = `./public/${timestamp}_${image.name}`; // - this will create the path for the image in the public folder
+//     // await writeFile(path, buffer); // - this will write the image file in the public folder (storing the image in the public folder)
+//     // const imageUrl = `/${timestamp}_${image.name}`; // - this will create the url for the image to store in the mongo db (storing the image url in the mongo db)
+//     // // test
+//     // // console.log(imageUrl);
+
+//     // UPDATED USE  cloudinary FOR LIVE SITE
+    
+//     const bytes = await image.arrayBuffer();
+//     const buffer = Buffer.from(bytes);
+
+//     const uploadResponse = await new Promise((resolve, reject) => {
+//     cloudinary.uploader.upload_stream({}, (error, result) => {
+//         if (error) reject(error);
+//         else resolve(result);
+//     }).end(buffer);
+//     });
+
+//     const imageUrl = uploadResponse.secure_url;
+//     const public_id = uploadResponse.public_id;
+
+
+//     // now for the title, descripotiona and ect store in db
+//     const blogData = {
+//         title: `${formData.get('title')}`,
+//         description: `${formData.get('description')}`,
+//         category: `${formData.get('category')}`,
+//         author: `${formData.get('author')}`,
+//         image: `${imageUrl}`,
+//          public_id: public_id, // 👈 ADD THIS
+//         authorImage: `${formData.get('authorImage')}`
+//     }
+//     //we will use this blogdata to store in db
+
+//     await BlogModel.create(blogData)
+//     console.log("Blog Saved!")
+
+
+
+//     return NextResponse.json({ success: true, msg: "Blog Added!" });
+// }
+
+
+
+//UPDATED POSTS
 export async function POST(request) {
+  try {
+    const formData = await request.formData();
+    const image = formData.get('image');
 
-    const formData = await request.formData(); // - this will get the form data from the request
-    const timestamp = Date.now(); // - this will get the current timestamp for rename in images
+    if (!image) {
+      return NextResponse.json({ error: "No image provided" }, { status: 400 });
+    }
 
-    //extract the image from the form data
-    const image = formData.get('image'); // - this will get the image from the form data
-    //using this store the image in the public folder and rename it with the timestamp to avoid name conflicts
-
-    // UPDATE USE THIS FOR LOCAL
-    // const imageByteData = await image.arrayBuffer(); // - this will get the byte data of the image
-    // const buffer = Buffer.from(imageByteData); // - this will convert the byte data to buffer
-    // const path = `./public/${timestamp}_${image.name}`; // - this will create the path for the image in the public folder
-    // await writeFile(path, buffer); // - this will write the image file in the public folder (storing the image in the public folder)
-    // const imageUrl = `/${timestamp}_${image.name}`; // - this will create the url for the image to store in the mongo db (storing the image url in the mongo db)
-    // // test
-    // // console.log(imageUrl);
-
-    // UPDATED USE  cloudinary FOR LIVE SITE
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const mimeType = image.type;
 
-    const uploadResponse = await new Promise((resolve, reject) => {
-    cloudinary.uploader.upload_stream({}, (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-    }).end(buffer);
-    });
+    const base64 = `data:${mimeType};base64,${buffer.toString('base64')}`;
 
-    const imageUrl = uploadResponse.secure_url;
-    const public_id = uploadResponse.public_id;
+    console.log("Uploading to Cloudinary...");
+    const uploadResponse = await cloudinary.uploader.upload(base64, { resource_type: "auto" });
+    console.log("Cloudinary upload result:", uploadResponse);
 
-
-    // now for the title, descripotiona and ect store in db
     const blogData = {
-        title: `${formData.get('title')}`,
-        description: `${formData.get('description')}`,
-        category: `${formData.get('category')}`,
-        author: `${formData.get('author')}`,
-        image: `${imageUrl}`,
-         public_id: public_id, // 👈 ADD THIS
-        authorImage: `${formData.get('authorImage')}`
-    }
-    //we will use this blogdata to store in db
+      title: formData.get('title'),
+      description: formData.get('description'),
+      category: formData.get('category'),
+      author: formData.get('author'),
+      image: uploadResponse.secure_url,
+      public_id: uploadResponse.public_id,
+      authorImage: formData.get('authorImage')
+    };
 
-    await BlogModel.create(blogData)
-    console.log("Blog Saved!")
-
-
+    await BlogModel.create(blogData);
+    console.log("Blog saved!");
 
     return NextResponse.json({ success: true, msg: "Blog Added!" });
-}
-
+  } catch (error) {
+    console.error("POST /api/blog failed:", error);
+    return NextResponse.json({ error: "Upload failed", details: error.message }, { status: 500 });
+  }
+};
 
 // Creating API Endpoint to delete blog
 // export async function DELETE(request){
@@ -120,7 +162,19 @@ export async function POST(request) {
 //     return NextResponse.json({msg:"Blog deleted!"});
 // }
 
-//For cloud
+//old
+// Creating API Endpoint to delete blog
+// export async function DELETE(request){
+//     //to delete we need blog id
+//     const id  = request.nextUrl.searchParams.get("id"); //mongo db id as a parameter
+//     const blog = await BlogModel.findById(id);
+//     fs.unlink(`./public${blog.image}`,() =>{}); //image will be deleted
+//     await BlogModel.findByIdAndDelete(id); // also blog will be deleted
+//     return NextResponse.json({msg:"Blog deleted!"});
+// }
+
+
+//For cloud delete
 export async function DELETE(request){
     try {
         const id = request.nextUrl.searchParams.get("id");

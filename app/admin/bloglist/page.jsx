@@ -2,6 +2,7 @@
 import BlogTableItem from '@/Components/AdminComponents/BlogTableItem'
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
 
 const page = () => {
   const [blogs, setBlog] = useState([]);
@@ -15,12 +16,24 @@ const page = () => {
     console.log(response.data.blogs)
   }
 
+  //For deleteng the blog
+  const deleteBlog = async (mongoId) => {
+    const response = await axios.delete('/api/blog', {
+      params: {
+        id: mongoId
+      }
+    })
+    toast.success(response.data.msg);
+    //Now we have to refresh the page after deleteng a data blog post using call fetchBlog();
+    fetchBlogs();
+
+    //in this function if we provide and mongoDb id for particular blog those blog will be deleted form db then image also remove form the public folder
+  } // we have to pass this function into BlogTableItem component because the delete is there
+  //Now send this function in the BlogTableItem using props 
+
   useEffect(() => {
-    fetchBlogs()
-  }, [])
-
-
-
+    fetchBlogs();
+  }, []);
 
   return (
     <div className='flex-1 pt-5 px-5 sm:pt-12 sm:pl-16'>
@@ -45,7 +58,7 @@ const page = () => {
           </thead>
           <tbody>
             {blogs.map((item, index) => {
-              return <BlogTableItem key={index} mongoId={item._id} title={item.title} author={item.author} authorImage={item.authorImage} date={item.date}/>
+              return <BlogTableItem key={index} mongoId={item._id} title={item.title} author={item.author} authorImage={item.authorImage} date={item.date} deleteBlog={deleteBlog}/>
             })}
 
           </tbody>

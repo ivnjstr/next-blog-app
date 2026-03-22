@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/config/db";
 import BlogModel from "@/lib/models/BlogModel";
 import { writeFile } from 'fs/promises'; // - this will be used to write the image file in the public folder
 const { NextResponse } = require("next/server");
+const fs = require('fs'); //this is for deleteng the image also
 
 const LoadDB = async () => {
     // we use this to connect to the database \
@@ -86,4 +87,15 @@ export async function POST(request) {
 
 
     return NextResponse.json({ success: true, msg: "Blog Added!" });
+}
+
+
+// Creating API Endpoint to delete blog
+export async function DELETE(request){
+    //to delete we need blog id
+    const id  = request.nextUrl.searchParams.get("id"); //mongo db id as a parameter
+    const blog = await BlogModel.findById(id);
+    fs.unlink(`./public${blog.image}`,() =>{}); //image will be deleted
+    await BlogModel.findByIdAndDelete(id); // also blog will be deleted
+    return NextResponse.json({msg:"Blog deleted!"});
 }

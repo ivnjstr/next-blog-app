@@ -2,9 +2,12 @@
 
 import { connectDB } from "@/lib/config/db";
 import BlogModel from "@/lib/models/BlogModel";
-import { writeFile } from 'fs/promises'; // - this will be used to write the image file in the public folder
+// import { writeFile } from 'fs/promises'; // - this will be used to write the image file in the public folder
 const { NextResponse } = require("next/server");
-const fs = require('fs'); //this is for deleteng the image also
+// const fs = require('fs'); //this is for deleteng the image also
+
+//for live use cloudinary
+import cloudinary from "@/lib/cloudinary";
 
 const LoadDB = async () => {
     // we use this to connect to the database \
@@ -61,13 +64,29 @@ export async function POST(request) {
     //extract the image from the form data
     const image = formData.get('image'); // - this will get the image from the form data
     //using this store the image in the public folder and rename it with the timestamp to avoid name conflicts
-    const imageByteData = await image.arrayBuffer(); // - this will get the byte data of the image
-    const buffer = Buffer.from(imageByteData); // - this will convert the byte data to buffer
-    const path = `./public/${timestamp}_${image.name}`; // - this will create the path for the image in the public folder
-    await writeFile(path, buffer); // - this will write the image file in the public folder (storing the image in the public folder)
-    const imageUrl = `/${timestamp}_${image.name}`; // - this will create the url for the image to store in the mongo db (storing the image url in the mongo db)
-    // test
-    // console.log(imageUrl);
+
+    // UPDATE USE THIS FOR LOCAL
+    // const imageByteData = await image.arrayBuffer(); // - this will get the byte data of the image
+    // const buffer = Buffer.from(imageByteData); // - this will convert the byte data to buffer
+    // const path = `./public/${timestamp}_${image.name}`; // - this will create the path for the image in the public folder
+    // await writeFile(path, buffer); // - this will write the image file in the public folder (storing the image in the public folder)
+    // const imageUrl = `/${timestamp}_${image.name}`; // - this will create the url for the image to store in the mongo db (storing the image url in the mongo db)
+    // // test
+    // // console.log(imageUrl);
+
+    // UPDATED USE  cloudinary FOR LIVE SITE
+    const bytes = await image.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const uploadResponse = await new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream({}, (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+    }).end(buffer);
+    });
+
+    const imageUrl = uploadResponse.secure_url;
+    const public_id = uploadResponse.public_id;
 
 
     // now for the title, descripotiona and ect store in db
@@ -77,6 +96,7 @@ export async function POST(request) {
         category: `${formData.get('category')}`,
         author: `${formData.get('author')}`,
         image: `${imageUrl}`,
+         public_id: public_id, // 👈 ADD THIS
         authorImage: `${formData.get('authorImage')}`
     }
     //we will use this blogdata to store in db
@@ -91,11 +111,39 @@ export async function POST(request) {
 
 
 // Creating API Endpoint to delete blog
+// export async function DELETE(request){
+//     //to delete we need blog id
+//     const id  = request.nextUrl.searchParams.get("id"); //mongo db id as a parameter
+//     const blog = await BlogModel.findById(id);
+//     fs.unlink(`./public${blog.image}`,() =>{}); //image will be deleted
+//     await BlogModel.findByIdAndDelete(id); // also blog will be deleted
+//     return NextResponse.json({msg:"Blog deleted!"});
+// }
+
+//For cloud
 export async function DELETE(request){
-    //to delete we need blog id
-    const id  = request.nextUrl.searchParams.get("id"); //mongo db id as a parameter
-    const blog = await BlogModel.findById(id);
-    fs.unlink(`./public${blog.image}`,() =>{}); //image will be deleted
-    await BlogModel.findByIdAndDelete(id); // also blog will be deleted
-    return NextResponse.json({msg:"Blog deleted!"});
+    try {
+        const id = request.nextUrl.searchParams.get("id");
+
+        const blog = await BlogModel.findById(id);
+
+        if (!blog) {
+            return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+        }
+
+        console.log("PUBLIC ID:", blog.public_id);
+
+        if (blog.public_id) {
+            const result = await cloudinary.uploader.destroy(blog.public_id);
+            console.log("Cloudinary delete:", result);
+        }
+
+        await BlogModel.findByIdAndDelete(id);
+
+        return NextResponse.json({ msg: "Blog and image deleted!" });
+
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json({ error: "Delete failed" }, { status: 500 });
+    }
 }

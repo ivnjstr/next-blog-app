@@ -62,9 +62,13 @@ const page = ({ params }) => {
 
     <div className='mx-5 max-w-200 md:mx-auto -mt-25 mb-10'>
       <Image className='border-4 border-white' src={data?.image} width={1280} height={720} alt='' />
-      <h1 className='my-8 text-[26px] font-semibold'>Introduction:</h1>
-      <p className='text-lg'>{data?.description}</p>
-      <h3 className='my-5 text-[18px] font-semibold'>Step 1: Self-Reflection and Goal Setting</h3>
+      {/* <h1 className='my-8 text-[26px] font-semibold'>Introduction:</h1> */}
+
+      <div className='blog-content' dangerouslySetInnerHTML={{ __html: data.description }}>
+      </div>
+
+      {/* <p className='text-lg'>{data?.description}</p> */}
+      {/* <h3 className='my-5 text-[18px] font-semibold'>Step 1: Self-Reflection and Goal Setting</h3>
       <p className='my-3'>Before you can effectively manage your lifestyle, it's important to take some time for self-reflection and set clear, achievable goals. This process will help you understand your current situation, identify areas for improvement, and create a roadmap for success. </p>
       <p className='my-3'>Before you can effectively manage your lifestyle, it's important to take some time for self-reflection and set clear, achievable goals. This process will help you understand your current situation, identify areas for improvement, and create a roadmap for success. </p>
       <h3 className='my-5 text-[18px] font-semibold'>Step 2: Self-Reflection and Goal Setting</h3>
@@ -75,7 +79,7 @@ const page = ({ params }) => {
       <p className='my-3'>Before you can effectively manage your lifestyle, it's important to take some time for self-reflection and set clear, achievable goals. This process will help you understand your current situation, identify areas for improvement, and create a roadmap for success. </p>
       <h3 className='my-5 text-[18px] font-semibold'>Conclusion:</h3>
       <p className='my-3'>In conclusion, managing your lifestyle effectively requires a combination of self-reflection, goal setting, and consistent action. By following these steps, you can create a more balanced and fulfilling life.</p>
-      <p className='my-3'>Before you can effectively manage your lifestyle, it's important to take some time for self-reflection and set clear, achievable goals. This process will help you understand your current situation, identify areas for improvement, and create a roadmap for success. </p>
+      <p className='my-3'>Before you can effectively manage your lifestyle, it's important to take some time for self-reflection and set clear, achievable goals. This process will help you understand your current situation, identify areas for improvement, and create a roadmap for success. </p> */}
       <div className='my-24'>
         <p className='text-black font font-semibold my-4'>Share this article on social media</p>
         <div className='flex'>

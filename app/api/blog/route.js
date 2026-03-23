@@ -122,15 +122,20 @@ export async function POST(request) {
       return NextResponse.json({ error: "No image provided" }, { status: 400 });
     }
 
-    const bytes = await image.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const mimeType = image.type;
+    // Convert the image to a Buffer
+    const arrayBuffer = await image.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    const base64 = `data:${mimeType};base64,${buffer.toString('base64')}`;
-
-    console.log("Uploading to Cloudinary...");
-    const uploadResponse = await cloudinary.uploader.upload(base64, { resource_type: "auto" });
-    console.log("Cloudinary upload result:", uploadResponse);
+    // Upload to Cloudinary using a Promise and upload_stream
+    const uploadResponse = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { resource_type: "auto", folder: "blogs" }, 
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(buffer);
+    });
 
     const blogData = {
       title: formData.get('title'),
@@ -143,14 +148,13 @@ export async function POST(request) {
     };
 
     await BlogModel.create(blogData);
-    console.log("Blog saved!");
-
+    
     return NextResponse.json({ success: true, msg: "Blog Added!" });
   } catch (error) {
-    console.error("POST /api/blog failed:", error);
-    return NextResponse.json({ error: "Upload failed", details: error.message }, { status: 500 });
+    console.error("Upload error:", error);
+    return NextResponse.json({ success: false, msg: "Upload failed" }, { status: 500 });
   }
-};
+}
 
 // Creating API Endpoint to delete blog
 // export async function DELETE(request){

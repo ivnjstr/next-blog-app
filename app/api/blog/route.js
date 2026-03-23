@@ -179,8 +179,9 @@ export async function POST(request) {
 
 
 //For cloud delete
-export async function DELETE(request){
+export async function DELETE(request) {
     try {
+        await connectDB(); // Always connect first
         const id = request.nextUrl.searchParams.get("id");
 
         const blog = await BlogModel.findById(id);
@@ -189,19 +190,27 @@ export async function DELETE(request){
             return NextResponse.json({ error: "Blog not found" }, { status: 404 });
         }
 
-        console.log("PUBLIC ID:", blog.public_id);
+        // Log to see what is actually being sent to Cloudinary
+        console.log("Attempting to delete Public ID:", blog.public_id);
 
         if (blog.public_id) {
+            // Cloudinary destroy returns a result object
             const result = await cloudinary.uploader.destroy(blog.public_id);
-            console.log("Cloudinary delete:", result);
+            
+            // Check if result is 'ok' or 'not found'
+            console.log("Cloudinary response:", result);
+            
+            if (result.result !== 'ok') {
+                console.warn("Cloudinary delete failed or image already gone:", result);
+            }
         }
 
         await BlogModel.findByIdAndDelete(id);
 
-        return NextResponse.json({ msg: "Blog and image deleted!" });
+        return NextResponse.json({ success: true, msg: "Blog and image deleted!" });
 
     } catch (error) {
-        console.log(error);
-        return NextResponse.json({ error: "Delete failed" }, { status: 500 });
+        console.error("Delete API Error:", error);
+        return NextResponse.json({ error: "Delete failed", details: error.message }, { status: 500 });
     }
 }

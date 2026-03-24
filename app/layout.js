@@ -4,7 +4,7 @@ import "./globals.css";
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
-  weights: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 // const geistMono = Geist_Mono({

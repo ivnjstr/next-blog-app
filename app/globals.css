@@ -1,17 +1,16 @@
 @import "tailwindcss";
 
-@layer utilities {
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+/* ===== BASE (global styles) ===== */
+@layer base {
+  body {
+    font-family: var(--font-outfit);
   }
+}
 
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
+/* ===== COMPONENTS (structured UI styles) ===== */
+@layer components {
   .blog-content {
-    padding: 36px 0px;
+    padding: 36px 0;
   }
 
   .blog-content b {
@@ -42,6 +41,18 @@
   }
 }
 
+/* ===== UTILITIES (small helpers) ===== */
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 /* :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -66,3 +77,4 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 } */
+

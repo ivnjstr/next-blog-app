@@ -38,39 +38,39 @@ const Page = ({ params }) => {
               <Link href={'/'}>
                 <Image src={assets.logo} alt='Logo' width={140} className='w-28 sm:w-36' />
               </Link>
-              <button className='flex items-center gap-2 font-semibold py-2 px-5 sm:px-8 bg-black text-white rounded-full hover:bg-gray-800 transition-all text-sm'>
-                Get Started <Image src={assets.arrow} alt='' className='invert w-3' />
+              <button className='bg-black text-white py-2 px-6 rounded-full text-sm font-semibold hover:bg-gray-800 transition-all'>
+                Get started
               </button>
             </div>
 
             {/* Hero Title Section */}
             <div className='text-center mt-16 mb-24 max-w-4xl mx-auto'>
-              <p className="text-xs uppercase tracking-[0.3em] text-gray-400 font-bold mb-4">{data?.category}</p>
-              <h1 className='text-3xl sm:text-6xl font-bold leading-tight text-gray-900 mb-8'>
-                {data?.title}
-              </h1>
-
-              <div className="flex flex-col items-center">
-                <Image src={data?.authorImage} alt={data?.author} width={50} height={50} className='rounded-full border-2 border-white shadow-md' />
-                <p className='mt-3 text-gray-600 font-medium italic'>by {data?.author}</p>
-              </div>
+                <p className="text-xs uppercase tracking-[0.3em] text-gray-400 font-bold mb-4">{data?.category}</p>
+                <h1 className='text-3xl sm:text-6xl font-bold leading-tight text-gray-900 mb-8'>
+                    {data?.title}
+                </h1>
+                
+                <div className="flex flex-col items-center">
+                    <Image src={data?.authorImage} alt={data?.author} width={50} height={50} className='rounded-full border-2 border-white shadow-md' />
+                    <p className='mt-3 text-gray-600 font-medium italic'>by {data?.author}</p>
+                </div>
             </div>
           </div>
 
           {/* Featured Image - Overlapping look */}
           <div className='max-w-5xl mx-auto px-5 -mt-16 mb-16'>
-            <Image
-              className='rounded-3xl shadow-2xl object-cover aspect-video border-[8px] border-white'
-              src={data?.image}
-              width={1280}
-              height={720}
-              alt='Featured'
+            <Image 
+                className='rounded-3xl shadow-2xl object-cover aspect-video border-[8px] border-white' 
+                src={data?.image} 
+                width={1280} 
+                height={720} 
+                alt='Featured' 
             />
           </div>
 
           {/* Article Content */}
-          <article className='max-w-5xl mx-auto px-6 mb-20'>
-            <div
+          <article className='max-w-3xl mx-auto px-6 mb-20'>
+            <div 
               className='prose prose-lg max-w-none first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left text-gray-700 leading-relaxed'
               dangerouslySetInnerHTML={{ __html: data.description }}
             >
@@ -86,12 +86,12 @@ const Page = ({ params }) => {
               </div>
             </div>
           </article>
-
+          
           <Footer />
         </div>
       ) : (
         <div className="h-screen flex items-center justify-center">
-          <p className="text-center text-gray-500">Blog not found.</p>
+             <p className="text-center text-gray-500">Blog not found.</p>
         </div>
       )}
     </>

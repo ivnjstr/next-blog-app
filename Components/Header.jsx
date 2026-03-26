@@ -5,40 +5,67 @@ import React, { useState } from 'react'
 import { toast } from 'react-toastify';
 
 const Header = () => {
-
-  const [email, setEmail] = useState(""); //link this state in input feilds
+  const [email, setEmail] = useState("");
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-
     const formData = new FormData();
-    formData.append("email", email); //this is the field name
+    formData.append("email", email);
 
-    //api call
     const response = await axios.post('/api/email', formData);
     if (response.data.success){
       toast.success(response.data.msg);
-      setEmail(""); //so that it will create the input field if success
-    }
-    else{
-      toast.error("error");
+      setEmail("");
+    } else {
+      toast.error("Error subscribing");
     }
   }
 
   return (
-    <div className='py-5 px-5 md:px-12 lg:px-28'>
-      <div className='flex justify-between items-center'>
-        <Image src={assets.logo} width={180} alt='' className='w-32.5 sm:w-auto' />
-        <button className='flex items-center gap-2 font-medium py-1 px-3 sm:py-3 sm:px-6 border border-solid border-black shadow-[-7px_7px_0px_#000000]'>Get Started <Image src={assets.arrow} alt=''/></button>
+    <div className='py-8 px-6 md:px-12 lg:px-28 bg-white'>
+      {/* Navbar Section */}
+      <div className='flex justify-between items-center max-w-7xl mx-auto'>
+        <Image src={assets.logo} width={140} alt='Logo' className='w-28 sm:w-36' />
+        <button className='flex items-center gap-2 font-semibold py-2 px-5 sm:px-8 bg-black text-white rounded-full hover:bg-gray-800 transition-all text-sm'>
+          Get Started <Image src={assets.arrow} alt='' className='invert w-3' />
+        </button>
       </div>
 
-      <div className='text-center my-8'>
-        <h1 className='text-3xl sm:text-5xl font-medium'>Latest Blogs</h1>
-        <p className='mt-10 max-w-185 m-auto text-xs sm:text-base'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quod quas quisquam eaque blanditiis omnis asperiores distinctio ullam. Saepe, aliquid sit.</p>
-        <form onSubmit={onSubmitHandler} className='flex justify-between max-w-125 scale-75 sm:scale-100 mx-auto mt-10 border border-black shadow-[-7px_7px_0px_#000000]' action="">
-          <input onChange={(e)=>setEmail(e.target.value)} value={email} type="email" placeholder='Enter your email' className='pl-4 outline-none' />
-          <button type='submit' className='border-l border-black py-4 px-4 sm:px-8 active:bg-gray-600 active:text-white'>Subscribe</button>
+      {/* Hero Content */}
+      <div className='text-center mt-20 max-w-3xl mx-auto'>
+        <h1 className='text-4xl sm:text-6xl font-bold tracking-tight text-gray-900'>
+          Discover Your Next <br /> 
+          <span className="text-gray-400">Great Adventure</span>
+        </h1>
+        
+        <p className='mt-6 text-gray-500 text-sm sm:text-lg leading-relaxed px-4'>
+          Curated stories from around the globe, covering everything from startup culture 
+          to the world's most hidden travel gems.
+        </p>
+
+        {/* Updated Subscription Form */}
+        <form 
+          onSubmit={onSubmitHandler} 
+          className='flex items-center max-w-md mx-auto mt-12 p-1 bg-gray-100 rounded-full border border-gray-200 focus-within:border-black transition-all'
+        >
+          <input 
+            onChange={(e)=>setEmail(e.target.value)} 
+            value={email} 
+            type="email" 
+            placeholder='Enter your email address' 
+            className='flex-1 bg-transparent pl-6 py-3 outline-none text-sm' 
+            required
+          />
+          <button 
+            type='submit' 
+            className='bg-black text-white py-3 px-6 sm:px-10 rounded-full text-sm font-semibold hover:bg-gray-800 active:scale-95 transition-all'
+          >
+            Subscribe
+          </button>
         </form>
+        
+        {/* Subtle separator */}
+        {/* <div className="mt-16 w-20 h-1 bg-black mx-auto rounded-full opacity-10"></div> */}
       </div>
     </div>
   )

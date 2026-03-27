@@ -38,9 +38,12 @@ const Page = ({ params }) => {
               <Link href={'/'}>
                 <Image src={assets.logo} alt='Logo' width={140} className='w-28 sm:w-36' />
               </Link>
-              <button className='flex items-center gap-2 font-semibold py-2 px-5 sm:px-8 bg-black text-white rounded-full hover:bg-gray-800 transition-all text-sm'>
-                Get Started <Image src={assets.arrow} alt='' className='invert w-3' />
-              </button>
+              <Link href={'/admin'}>
+                <button className='flex items-center gap-2 font-semibold py-2 px-5 sm:px-8 bg-black text-white rounded-full hover:bg-gray-800 transition-all text-sm'>
+                  Get Started <Image src={assets.arrow} alt='' className='invert w-3' />
+                </button>
+              </Link>
+              
             </div>
 
             {/* Hero Title Section */}

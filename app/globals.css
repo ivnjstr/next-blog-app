@@ -9,9 +9,9 @@
 
 /* ===== COMPONENTS (structured UI styles) ===== */
 @layer components {
-  .blog-content {
+  /* .blog-content {
     padding: 36px 0;
-  }
+  } */
 
   .blog-content b {
     margin-bottom: 10px;

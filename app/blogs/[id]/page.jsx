@@ -74,7 +74,7 @@ const Page = ({ params }) => {
           {/* Article Content */}
           <article className='max-w-5xl mx-auto px-6 mb-20'>
             <div
-              className='prose prose-lg max-w-none first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left text-gray-700 leading-relaxed'
+              className='blog-content prose prose-lg max-w-none first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left text-gray-700 leading-relaxed'
               dangerouslySetInnerHTML={{ __html: data.description }}
             >
             </div>

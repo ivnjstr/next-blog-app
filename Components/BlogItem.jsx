@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const BlogItem = ({title, category, image, id, isFeatured, hasVideo}) => {
+const BlogItem = ({title, category, image, id, isFeatured, hasVideo, authorImage}) => {
   return (
     <Link 
       href={`/blogs/${id}`} 
@@ -44,12 +44,13 @@ const BlogItem = ({title, category, image, id, isFeatured, hasVideo}) => {
         
         {/* Author Avatars */}
         <div className="flex items-center mt-5 -space-x-3">
-            {[1, 2].map((i) => (
-                <div key={i} className="w-9 h-9 rounded-full border-2 border-white bg-slate-400 overflow-hidden shadow-lg">
+            {/* {[1, 2].map((i) => ( */}
+                <div className="w-9 h-9 rounded-full border-2 border-white bg-slate-400 overflow-hidden shadow-lg">
                     {/* Placeholder for author image */}
-                    <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-500" />
+                    {/* <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-500" /> */}
+                    <Image src={authorImage} alt='Profile image' width={32} height={32} />
                 </div>
-            ))}
+            {/* ))} */}
         </div>
       </div>
     </Link>

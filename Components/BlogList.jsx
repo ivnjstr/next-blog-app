@@ -11,6 +11,7 @@ const BlogList = () => {
     const fetchBlogs = async () => {
         const response = await axios.get('/api/blog');
         setBlogs(response.data.blogs);
+        console.log(response.data.blogs);
         setLoading(false);
     }
 
@@ -60,6 +61,7 @@ const BlogList = () => {
                                         category={item.category}
                                         isFeatured={isFeatured}
                                         hasVideo={isSecondary} // Just as an example for the play icon
+                                        authorImage={item.authorImage}
                                     />
                                 </div>
                             )

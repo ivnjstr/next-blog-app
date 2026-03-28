@@ -12,10 +12,10 @@ export default function Layout({ children }) {
             {/* Sidebar remains fixed on the left */}
             <Sidebar />
 
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full sm:pl-0">
                 {/* Top Navigation Bar */}
                 <header className="sticky top-0 z-10 flex items-center justify-between w-full py-4 px-6 md:px-12 bg-white/80 backdrop-blur-md border-b border-gray-100">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 pl-12 sm:pl-0">
                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                         <h3 className="font-bold text-sm uppercase tracking-widest text-gray-500">
                             Admin Console

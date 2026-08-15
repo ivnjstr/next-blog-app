@@ -5,9 +5,11 @@ import { Providers } from "@/Components/Providers";
 import Image from "next/image";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Layout({ children }) {
+    const { data: session } = useSession();
+
     return (
         <div className="flex min-h-screen bg-[#fcfcfc]">
             
@@ -26,8 +28,8 @@ export default function Layout({ children }) {
 
                     <div className="flex items-center gap-6">
                         <div className="text-right hidden sm:block">
-                            <p className="text-xs font-bold text-gray-900">Ivan Jester</p>
-                            <p className="text-[10px] text-gray-400">Editor-in-Chief</p>
+                            <p className="text-xs font-bold text-gray-900">{session?.user?.name || "Admin"}</p>
+                            <p className="text-[10px] text-gray-400 capitalize">{session?.user?.role || "editor"}</p>
                         </div>
 
                         {/* Logout Button */}

@@ -1,13 +1,11 @@
 import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { connectDB } from "@/lib/config/db";
+import UserModel from "@/lib/models/UserModel";
 
 const handler = NextAuth({
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -15,24 +13,27 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        // TEMPORARY ADMIN CREDENTIALS
-        const adminEmail = "admin@gmail.com";
-        const adminPass = "admin";
+        if (!credentials?.email || !credentials?.password) return null;
 
-        if (credentials.email === adminEmail && credentials.password === adminPass) {
-          return { id: "1", name: "Ivan Jester", email: adminEmail };
-        }
-        return null;
+        await connectDB();
+        const user = await UserModel.findOne({ email: credentials.email });
+        if (!user) return null;
+
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isValid) return null;
+
+        return { id: user._id.toString(), name: user.name, email: user.email, role: user.role };
       }
     })
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account.provider === "google") {
-        const adminEmails = ["your-google-email@gmail.com"];
-        return adminEmails.includes(user.email);
-      }
-      return true; // Credentials already checked in authorize
+    async jwt({ token, user }) {
+      if (user) token.role = user.role;
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) session.user.role = token.role;
+      return session;
     },
   },
   pages: {

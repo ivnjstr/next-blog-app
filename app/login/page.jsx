@@ -45,19 +45,6 @@ const LoginPage = () => {
             Login as Admin
           </button>
         </form>
-
-        <div className="flex items-center my-6">
-            <div className="flex-1 h-px bg-gray-100"></div>
-            <p className="px-4 text-xs text-gray-400 font-bold uppercase">Or</p>
-            <div className="flex-1 h-px bg-gray-100"></div>
-        </div>
-        
-        <button 
-          onClick={() => signIn('google', { callbackUrl: '/admin' })}
-          className="w-full flex items-center justify-center gap-3 border border-gray-200 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-all"
-        >
-          Sign in with Google
-        </button>
       </div>
     </div>
   );

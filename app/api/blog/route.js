@@ -172,6 +172,60 @@ export async function POST(request) {
 // }
 
 
+// API ENDPOINT TO UPDATE AN EXISTING BLOG
+export async function PUT(request) {
+  try {
+    await connectDB();
+    const id = request.nextUrl.searchParams.get("id");
+
+    const blog = await BlogModel.findById(id);
+    if (!blog) {
+      return NextResponse.json({ success: false, msg: "Blog not found" }, { status: 404 });
+    }
+
+    const formData = await request.formData();
+    const image = formData.get('image');
+
+    const update = {
+      title: formData.get('title'),
+      description: formData.get('description'),
+      category: formData.get('category'),
+      author: formData.get('author'),
+      authorImage: formData.get('authorImage')
+    };
+
+    // Only touch Cloudinary/image fields if a new thumbnail file was actually sent
+    if (image && typeof image !== 'string' && image.size > 0) {
+      const arrayBuffer = await image.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const uploadResponse = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { resource_type: "auto", folder: "blogs" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(buffer);
+      });
+
+      if (blog.public_id) {
+        await cloudinary.uploader.destroy(blog.public_id);
+      }
+
+      update.image = uploadResponse.secure_url;
+      update.public_id = uploadResponse.public_id;
+    }
+
+    await BlogModel.findByIdAndUpdate(id, update);
+
+    return NextResponse.json({ success: true, msg: "Blog updated successfully!" });
+  } catch (error) {
+    console.error("Update error:", error);
+    return NextResponse.json({ success: false, msg: "Update failed" }, { status: 500 });
+  }
+}
+
 //For cloud delete
 export async function DELETE(request) {
     try {

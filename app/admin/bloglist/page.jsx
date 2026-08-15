@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 
 const Page = () => {
   const [blogs, setBlog] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchBlogs = async () => {
     const response = await axios.get('/api/blog')
@@ -21,7 +22,7 @@ const Page = () => {
   }
 
   useEffect(() => {
-    fetchBlogs();
+    fetchBlogs().finally(() => setLoading(false));
   }, []);
 
   return (
@@ -44,15 +45,21 @@ const Page = () => {
               </tr>
             </thead>
             <tbody className='divide-y divide-gray-50'>
-              {blogs.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="4" className="text-center py-20 text-gray-400 italic">Loading blogs...</td>
+                </tr>
+              ) : blogs.length > 0 ? (
                 blogs.map((item, index) => (
-                  <BlogTableItem 
-                    key={index} 
-                    mongoId={item._id} 
-                    title={item.title} 
-                    author={item.author} 
-                    authorImage={item.authorImage} 
-                    date={item.date} 
+                  <BlogTableItem
+                    key={index}
+                    mongoId={item._id}
+                    title={item.title}
+                    author={item.author}
+                    authorImage={item.authorImage}
+                    date={item.date}
+                    image={item.image}
+                    category={item.category}
                     deleteBlog={deleteBlog}
                   />
                 ))

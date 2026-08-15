@@ -3,6 +3,7 @@ import { assets } from "@/Assets/assets";
 import Sidebar from "@/Components/AdminComponents/Sidebar";
 import { Providers } from "@/Components/Providers";
 import Image from "next/image";
+import Link from "next/link";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { signOut, useSession } from "next-auth/react";
@@ -27,28 +28,28 @@ export default function Layout({ children }) {
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <div className="text-right hidden sm:block">
-                            <p className="text-xs font-bold text-gray-900">{session?.user?.name || "Admin"}</p>
-                            <p className="text-[10px] text-gray-400 capitalize">{session?.user?.role || "editor"}</p>
-                        </div>
+                        <Link href="/admin/profile" className="flex items-center gap-3 group">
+                            <div className="text-right hidden sm:block">
+                                <p className="text-xs font-bold text-gray-900 group-hover:underline">{session?.user?.name || "Admin"}</p>
+                                <p className="text-[10px] text-gray-400 capitalize">{session?.user?.role || "editor"}</p>
+                            </div>
+                            <div className="relative w-10 h-10">
+                                <Image
+                                    src={session?.user?.image || assets.profile_icon}
+                                    fill
+                                    alt="Profile"
+                                    className="rounded-full border border-gray-200 p-0.5 object-cover group-hover:border-black transition-all"
+                                />
+                            </div>
+                        </Link>
 
                         {/* Logout Button */}
-                        <button 
+                        <button
                             onClick={() => signOut({ callbackUrl: '/' })}
                             className="text-[10px] font-bold border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all uppercase tracking-tighter"
                         >
                             Logout
                         </button>
-
-                        <div className="relative">
-                            <Image 
-                                src={assets.profile_icon} 
-                                width={40} 
-                                height={40}
-                                alt="Profile" 
-                                className="rounded-full border border-gray-200 p-0.5"
-                            />
-                        </div>
                     </div>
                 </header>
 

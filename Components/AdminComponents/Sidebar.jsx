@@ -1,16 +1,46 @@
 'use client'
 
 import { assets } from '@/Assets/assets'
+import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+
+const DashboardIcon = ({ className }) => (
+    <svg viewBox="0 0 20 20" fill="none" className={className} width={20} height={20}>
+        <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+        <rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+        <rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+        <rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+    </svg>
+)
 
 const Sidebar = () => {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false); // State for mobile toggle
+    const [stats, setStats] = useState({ blogs: 0, subs: 0 });
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const [blogRes, emailRes] = await Promise.all([
+                    axios.get('/api/blog'),
+                    axios.get('/api/email')
+                ]);
+                setStats({
+                    blogs: blogRes.data.blogs.length,
+                    subs: emailRes.data.emails.length
+                });
+            } catch (error) {
+                // Quick stats are non-critical, fail silently
+            }
+        };
+        fetchStats();
+    }, []);
 
     const menuItems = [
+        { name: 'Dashboard', href: '/admin', isDashboard: true },
         { name: 'Add blogs', href: '/admin/addProduct', icon: assets.add_icon },
         { name: 'Blog lists', href: '/admin/bloglist', icon: assets.blog_icon },
         { name: 'Subscriptions', href: '/admin/subscriptions', icon: assets.email_icon },
@@ -72,12 +102,16 @@ const Sidebar = () => {
                                         }`}
                                 >
                                     <div className={`p-1 rounded-md ${isActive ? 'bg-white/20' : 'bg-transparent'}`}>
-                                        <Image 
-                                            src={item.icon} 
-                                            alt='' 
-                                            width={20} 
-                                            className={`${isActive ? 'invert' : 'opacity-60 group-hover:opacity-100'}`} 
-                                        />
+                                        {item.isDashboard ? (
+                                            <DashboardIcon className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-black'} />
+                                        ) : (
+                                            <Image
+                                                src={item.icon}
+                                                alt=''
+                                                width={20}
+                                                className={`${isActive ? 'invert' : 'opacity-60 group-hover:opacity-100'}`}
+                                            />
+                                        )}
                                     </div>
                                     <p className='font-semibold text-sm tracking-wide'>
                                         {item.name}
@@ -88,11 +122,28 @@ const Sidebar = () => {
                     </div>
                 </div>
                 
-                {/* Bottom Decoration */}
+                {/* Bottom: Quick Stats + Live Site Link */}
                 <div className='mt-auto p-8'>
                     <div className='p-4 bg-gray-50 rounded-2xl'>
-                        <p className='text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1'>Admin Mode</p>
-                        <p className='text-[11px] text-gray-500 leading-tight'>Manage your editorial content and subscribers.</p>
+                        <p className='text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-3'>Quick Stats</p>
+                        <div className='flex gap-3 mb-4'>
+                            <div className='flex-1'>
+                                <p className='text-xl font-bold text-gray-900'>{stats.blogs}</p>
+                                <p className='text-[10px] text-gray-400 uppercase tracking-wider'>Posts</p>
+                            </div>
+                            <div className='flex-1'>
+                                <p className='text-xl font-bold text-gray-900'>{stats.subs}</p>
+                                <p className='text-[10px] text-gray-400 uppercase tracking-wider'>Subscribers</p>
+                            </div>
+                        </div>
+                        <Link
+                            href='/'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='block text-center text-[11px] font-bold bg-white border border-gray-200 rounded-xl py-2.5 hover:bg-black hover:text-white hover:border-black transition-all'
+                        >
+                            View Live Site ↗
+                        </Link>
                     </div>
                 </div>
             </div>

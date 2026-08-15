@@ -9,14 +9,6 @@ const { NextResponse } = require("next/server");
 //for live use cloudinary
 import cloudinary from "@/lib/cloudinary";
 
-const LoadDB = async () => {
-    // we use this to connect to the database \
-    await connectDB();
-}
-
-LoadDB();
-
-
 
 // //API ENDPOINT TO GET ALL BLOGS
 // //first we will check if out api are working or not
@@ -33,12 +25,13 @@ LoadDB();
 //API ENDPOINT TO GET ALL BLOGS
 export async function GET(request) {
     try {
+        await connectDB();
         const blogId = request.nextUrl.searchParams.get("id");
         if (blogId) { //if we are sending the blogId from the frontend then display the particular blog data
             const blog = await BlogModel.findById(blogId);
             return NextResponse.json(blog); //if we  send the blog id we will return the particular blog in this response
         } else {
-            const blogs = await BlogModel.find({});
+            const blogs = await BlogModel.find({}).lean();
             return NextResponse.json({ blogs });
         } // if we are not sending any blog id then we will return all the blog data in response
 
@@ -115,6 +108,7 @@ export async function GET(request) {
 //UPDATED POSTS
 export async function POST(request) {
   try {
+    await connectDB();
     const formData = await request.formData();
     const image = formData.get('image');
 

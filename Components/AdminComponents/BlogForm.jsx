@@ -105,13 +105,26 @@ const BlogForm = ({
                                     name="category"
                                     onChange={onChangeHandler}
                                     value={data.category}
-                                    className='w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none bg-white cursor-pointer'
+                                    className='w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none bg-white text-gray-800 cursor-pointer'
                                 >
                                     <option value="Startup">Startup</option>
                                     <option value="Technology">Technology</option>
                                     <option value="Lifestyle">Lifestyle</option>
                                 </select>
                             </div>
+
+                            <label className='flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-black transition-all'>
+                                <input
+                                    type="checkbox"
+                                    checked={!!data.isFeatured}
+                                    onChange={(e) => setData(data => ({ ...data, isFeatured: e.target.checked }))}
+                                    className='mt-0.5 w-4 h-4 accent-black cursor-pointer'
+                                />
+                                <span>
+                                    <span className='block text-sm font-bold text-gray-700'>Feature this post</span>
+                                    <span className='block text-xs text-gray-400 mt-0.5'>Shown in the large spot at the top of the homepage. Only one post can be featured — selecting this will unfeature the current one.</span>
+                                </span>
+                            </label>
 
                             <button
                                 type='submit'

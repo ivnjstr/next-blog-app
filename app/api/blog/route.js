@@ -131,6 +131,8 @@ export async function POST(request) {
       ).end(buffer);
     });
 
+    const isFeatured = formData.get('isFeatured') === 'true';
+
     const blogData = {
       title: formData.get('title'),
       description: formData.get('description'),
@@ -138,8 +140,14 @@ export async function POST(request) {
       author: formData.get('author'),
       image: uploadResponse.secure_url,
       public_id: uploadResponse.public_id,
-      authorImage: formData.get('authorImage')
+      authorImage: formData.get('authorImage'),
+      isFeatured
     };
+
+    // Only one post can be featured at a time
+    if (isFeatured) {
+      await BlogModel.updateMany({}, { isFeatured: false });
+    }
 
     await BlogModel.create(blogData);
     
@@ -186,13 +194,21 @@ export async function PUT(request) {
     const formData = await request.formData();
     const image = formData.get('image');
 
+    const isFeatured = formData.get('isFeatured') === 'true';
+
     const update = {
       title: formData.get('title'),
       description: formData.get('description'),
       category: formData.get('category'),
       author: formData.get('author'),
-      authorImage: formData.get('authorImage')
+      authorImage: formData.get('authorImage'),
+      isFeatured
     };
+
+    // Only one post can be featured at a time
+    if (isFeatured) {
+      await BlogModel.updateMany({ _id: { $ne: id } }, { isFeatured: false });
+    }
 
     // Only touch Cloudinary/image fields if a new thumbnail file was actually sent
     if (image && typeof image !== 'string' && image.size > 0) {

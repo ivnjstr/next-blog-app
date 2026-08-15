@@ -4,7 +4,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 
-const BlogTableItem = ({ authorImage, title, author, date, image, category, deleteBlog, mongoId }) => {
+const BlogTableItem = ({ authorImage, title, author, date, image, category, isFeatured, deleteBlog, mongoId }) => {
     const BlogDate = new Date(date);
     const [confirming, setConfirming] = useState(false);
 
@@ -39,9 +39,14 @@ const BlogTableItem = ({ authorImage, title, author, date, image, category, dele
                         >
                             {title || "Untitled Post"}
                         </Link>
-                        {category && (
-                            <p className='text-[10px] uppercase tracking-widest text-gray-400 font-bold mt-0.5'>{category}</p>
-                        )}
+                        <div className='flex items-center gap-2 mt-1'>
+                            {category && (
+                                <p className='text-[10px] uppercase tracking-widest text-gray-400 font-bold'>{category}</p>
+                            )}
+                            {isFeatured && (
+                                <span className='inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest bg-black text-white px-2 py-0.5 rounded-full'>★ Featured</span>
+                            )}
+                        </div>
                     </div>
                 </div>
             </td>

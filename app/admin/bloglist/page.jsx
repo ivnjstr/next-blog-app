@@ -60,6 +60,7 @@ const Page = () => {
                     date={item.date}
                     image={item.image}
                     category={item.category}
+                    isFeatured={item.isFeatured}
                     deleteBlog={deleteBlog}
                   />
                 ))

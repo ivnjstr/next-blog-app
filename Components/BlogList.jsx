@@ -41,6 +41,10 @@ const BlogList = () => {
                 ) : (
                     blogs
                         .filter((item) => menu === "All" ? true : item.category === menu)
+                        // Move the admin-picked featured post to the front so it always
+                        // lands in the big spot. If none is marked, order is unchanged
+                        // (falls back to whichever post happens to be first).
+                        .sort((a, b) => (b.isFeatured === true) - (a.isFeatured === true))
                         .map((item, index) => {
                             // Logic to mimic your image layout
                             // First item is 2/3 width, second is 1/3, others are 1/3

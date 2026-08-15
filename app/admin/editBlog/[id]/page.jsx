@@ -24,7 +24,8 @@ const Page = ({ params }) => {
                     description: response.data.description || "",
                     category: response.data.category || "Startup",
                     author: response.data.author || "Ivan Jester",
-                    authorImage: response.data.authorImage || "/profile_img.jpg"
+                    authorImage: response.data.authorImage || "/profile_img.jpg",
+                    isFeatured: !!response.data.isFeatured
                 });
                 setExistingImageUrl(response.data.image || null);
             } catch (error) {
@@ -50,6 +51,7 @@ const Page = ({ params }) => {
         formData.append('category', data.category);
         formData.append('author', data.author);
         formData.append('authorImage', data.authorImage);
+        formData.append('isFeatured', data.isFeatured);
         if (image) formData.append('image', image);
 
         setSubmitting(true);

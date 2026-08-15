@@ -9,7 +9,8 @@ const INITIAL_DATA = {
     description: "",
     category: "Startup",
     author: "Ivan Jester",
-    authorImage: "/profile_img.jpg"
+    authorImage: "/profile_img.jpg",
+    isFeatured: false
 }
 
 const Page = () => {
@@ -31,6 +32,7 @@ const Page = () => {
         formData.append('category', data.category);
         formData.append('author', data.author);
         formData.append('authorImage', data.authorImage);
+        formData.append('isFeatured', data.isFeatured);
         formData.append('image', image);
 
         setSubmitting(true);

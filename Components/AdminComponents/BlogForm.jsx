@@ -1,11 +1,58 @@
 'use client'
 import { assets } from '@/Assets/assets'
 import Image from 'next/image'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import RichTextEditor from '@/Components/AdminComponents/RichTextEditor'
 import BlogArticle from '@/Components/BlogArticle'
 
 export const EMPTY_DESCRIPTION = '<p></p>'
+
+const CATEGORY_OPTIONS = ["Startup", "Technology", "Lifestyle"];
+
+// Custom dropdown instead of a native <select> — native select popups are
+// rendered by the OS and ignore CSS entirely (that's the blue highlight
+// bar you can't restyle), so we can't match the app's look with one.
+const CategoryDropdown = ({ value, onChange }) => {
+    const [open, setOpen] = useState(false);
+    const ref = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    return (
+        <div ref={ref} className='relative'>
+            <button
+                type='button'
+                onClick={() => setOpen(o => !o)}
+                className='w-full flex items-center justify-between pl-4 pr-3 py-3 rounded-xl border border-gray-200 focus:border-black outline-none bg-white text-gray-800 cursor-pointer'
+            >
+                <span>{value}</span>
+                <svg viewBox="0 0 20 20" fill="none" width={16} height={16} className={`text-gray-400 transition-transform shrink-0 ${open ? 'rotate-180' : ''}`}>
+                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+            </button>
+            {open && (
+                <div className='absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden py-1'>
+                    {CATEGORY_OPTIONS.map((opt) => (
+                        <button
+                            key={opt}
+                            type='button'
+                            onClick={() => { onChange(opt); setOpen(false); }}
+                            className={`w-full text-left px-4 py-2.5 text-sm transition-all ${opt === value ? 'bg-gray-100 font-bold text-black' : 'text-gray-600 hover:bg-gray-50'}`}
+                        >
+                            {opt}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    )
+}
 
 // Shared two-column "editor + live preview" UI used by both the
 // "Add Blog" and "Edit Blog" admin pages, so they stay visually identical.
@@ -59,12 +106,12 @@ const BlogForm = ({
                         {/* Image Upload Area */}
                         <div className='flex flex-col gap-3 mb-8'>
                             <p className='text-sm font-bold text-gray-700 uppercase tracking-wider'>Upload Thumbnail</p>
-                            <label htmlFor="image" className='cursor-pointer group'>
-                                <div className="relative w-40 h-24 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center bg-white overflow-hidden group-hover:border-black transition-all">
+                            <label htmlFor="image" className='cursor-pointer group block'>
+                                <div className="relative w-full aspect-video rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center bg-white overflow-hidden group-hover:border-black transition-all">
                                     {!previewImage ? (
                                         <div className='flex flex-col items-center gap-2'>
-                                            <Image src={assets.upload_area} width={30} alt='' className='opacity-40' />
-                                            <span className='text-[10px] font-bold text-gray-400'>CLICK TO UPLOAD</span>
+                                            <Image src={assets.upload_area} width={40} alt='' className='opacity-40' />
+                                            <span className='text-xs font-bold text-gray-400'>CLICK TO UPLOAD</span>
                                         </div>
                                     ) : (
                                         <Image src={previewImage} fill className='object-cover' alt='' unoptimized />
@@ -101,16 +148,10 @@ const BlogForm = ({
 
                             <div className='w-full sm:w-1/3'>
                                 <p className='text-sm font-bold text-gray-700 mb-2'>Category</p>
-                                <select
-                                    name="category"
-                                    onChange={onChangeHandler}
+                                <CategoryDropdown
                                     value={data.category}
-                                    className='w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none bg-white text-gray-800 cursor-pointer'
-                                >
-                                    <option value="Startup">Startup</option>
-                                    <option value="Technology">Technology</option>
-                                    <option value="Lifestyle">Lifestyle</option>
-                                </select>
+                                    onChange={(value) => setData(data => ({ ...data, category: value }))}
+                                />
                             </div>
 
                             <label className='flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-black transition-all'>

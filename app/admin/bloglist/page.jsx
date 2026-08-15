@@ -32,45 +32,40 @@ const Page = () => {
         <p className='text-gray-500 text-sm mt-1'>View and manage your published editorial content.</p>
       </div>
 
-      {/* Table Container - Card Style */}
+      {/* List Container - Card Style */}
       <div className='relative max-w-[1000px] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm'>
-        <div className='overflow-x-auto h-[75vh] scrollbar-hide'>
-          <table className='w-full text-sm text-left text-gray-600'>
-            <thead className='text-xs text-gray-400 uppercase tracking-widest bg-gray-50/50 border-b border-gray-100 font-bold'>
-              <tr>
-                <th scope="col" className='hidden sm:table-cell px-8 py-5'>Author</th>
-                <th scope="col" className='px-8 py-5'>Blog Title</th>
-                <th scope="col" className='px-8 py-5'>Date</th>
-                <th scope="col" className='px-8 py-5 text-center'>Action</th>
-              </tr>
-            </thead>
-            <tbody className='divide-y divide-gray-50'>
-              {loading ? (
-                <tr>
-                  <td colSpan="4" className="text-center py-20 text-gray-400 italic">Loading blogs...</td>
-                </tr>
-              ) : blogs.length > 0 ? (
-                blogs.map((item, index) => (
-                  <BlogTableItem
-                    key={index}
-                    mongoId={item._id}
-                    title={item.title}
-                    author={item.author}
-                    authorImage={item.authorImage}
-                    date={item.date}
-                    image={item.image}
-                    category={item.category}
-                    isFeatured={item.isFeatured}
-                    deleteBlog={deleteBlog}
-                  />
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" className="text-center py-20 text-gray-400 italic">No blogs found. Start by adding one!</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className='max-h-[75vh] overflow-y-auto scrollbar-hide'>
+
+          {/* Header row - desktop only, mobile cards are self-describing */}
+          <div className='hidden sm:flex items-center gap-4 text-xs text-gray-400 uppercase tracking-widest bg-gray-50/50 border-b border-gray-100 font-bold px-8 py-5'>
+            <div className='w-40 shrink-0'>Author</div>
+            <div className='flex-1'>Blog Title</div>
+            <div className='w-28 shrink-0'>Date</div>
+            <div className='w-40 shrink-0 text-center'>Action</div>
+          </div>
+
+          <div className='divide-y divide-gray-50'>
+            {loading ? (
+              <p className="text-center py-20 text-gray-400 italic">Loading blogs...</p>
+            ) : blogs.length > 0 ? (
+              blogs.map((item, index) => (
+                <BlogTableItem
+                  key={index}
+                  mongoId={item._id}
+                  title={item.title}
+                  author={item.author}
+                  authorImage={item.authorImage}
+                  date={item.date}
+                  image={item.image}
+                  category={item.category}
+                  isFeatured={item.isFeatured}
+                  deleteBlog={deleteBlog}
+                />
+              ))
+            ) : (
+              <p className="text-center py-20 text-gray-400 italic">No blogs found. Start by adding one!</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

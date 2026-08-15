@@ -70,10 +70,10 @@ const Sidebar = () => {
 
             {/* Sidebar Container */}
             <div className={`
-                fixed sm:static inset-y-0 left-0 z-50
-                flex flex-col bg-white border-r border-gray-100 min-h-screen
+                fixed sm:sticky inset-y-0 sm:inset-y-auto left-0 sm:top-0 z-50
+                flex flex-col bg-white border-r border-gray-100 h-screen overflow-y-auto
                 transition-transform duration-300 ease-in-out
-                ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
+                ${isOpen ? 'translate-x-0' : '-translate-x-full'}
                 sm:translate-x-0 w-72 sm:w-80
             `}>
                 

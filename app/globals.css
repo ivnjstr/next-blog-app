@@ -39,6 +39,30 @@
     font-weight: 500;
     font-size: 15px;
   }
+
+  .blog-content ul,
+  .blog-content ol {
+    margin: 0 0 14px 24px;
+  }
+
+  .blog-content ul {
+    list-style: disc;
+  }
+
+  .blog-content ol {
+    list-style: decimal;
+  }
+
+  .blog-content li {
+    margin-bottom: 4px;
+  }
+
+  .blog-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 16px;
+    margin: 20px 0;
+  }
 }
 
 /* ===== UTILITIES (small helpers) ===== */

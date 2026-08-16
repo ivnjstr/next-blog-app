@@ -25,7 +25,8 @@ const Page = ({ params }) => {
                     category: response.data.category || "Startup",
                     author: response.data.author || "Ivan Jester",
                     authorImage: response.data.authorImage || "/profile_img.jpg",
-                    isFeatured: !!response.data.isFeatured
+                    isFeatured: !!response.data.isFeatured,
+                    hasVideo: !!response.data.hasVideo
                 });
                 setExistingImageUrl(response.data.image || null);
             } catch (error) {
@@ -52,6 +53,7 @@ const Page = ({ params }) => {
         formData.append('author', data.author);
         formData.append('authorImage', data.authorImage);
         formData.append('isFeatured', data.isFeatured);
+        formData.append('hasVideo', data.hasVideo);
         if (image) formData.append('image', image);
 
         setSubmitting(true);

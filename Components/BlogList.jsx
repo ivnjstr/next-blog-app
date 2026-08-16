@@ -49,7 +49,6 @@ const BlogList = () => {
                             // Logic to mimic your image layout
                             // First item is 2/3 width, second is 1/3, others are 1/3
                             const isFeatured = index === 0 && menu === "All";
-                            const isSecondary = index === 1 && menu === "All";
 
                             return (
                                 <div 
@@ -64,7 +63,7 @@ const BlogList = () => {
                                         title={item.title}
                                         category={item.category}
                                         isFeatured={isFeatured}
-                                        hasVideo={isSecondary} // Just as an example for the play icon
+                                        hasVideo={item.hasVideo}
                                         authorImage={item.authorImage}
                                     />
                                 </div>

@@ -132,6 +132,7 @@ export async function POST(request) {
     });
 
     const isFeatured = formData.get('isFeatured') === 'true';
+    const hasVideo = formData.get('hasVideo') === 'true';
 
     const blogData = {
       title: formData.get('title'),
@@ -141,7 +142,8 @@ export async function POST(request) {
       image: uploadResponse.secure_url,
       public_id: uploadResponse.public_id,
       authorImage: formData.get('authorImage'),
-      isFeatured
+      isFeatured,
+      hasVideo
     };
 
     // Only one post can be featured at a time
@@ -195,6 +197,7 @@ export async function PUT(request) {
     const image = formData.get('image');
 
     const isFeatured = formData.get('isFeatured') === 'true';
+    const hasVideo = formData.get('hasVideo') === 'true';
 
     const update = {
       title: formData.get('title'),
@@ -202,7 +205,8 @@ export async function PUT(request) {
       category: formData.get('category'),
       author: formData.get('author'),
       authorImage: formData.get('authorImage'),
-      isFeatured
+      isFeatured,
+      hasVideo
     };
 
     // Only one post can be featured at a time

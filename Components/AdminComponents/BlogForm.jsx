@@ -167,6 +167,19 @@ const BlogForm = ({
                                 </span>
                             </label>
 
+                            <label className='flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-black transition-all'>
+                                <input
+                                    type="checkbox"
+                                    checked={!!data.hasVideo}
+                                    onChange={(e) => setData(data => ({ ...data, hasVideo: e.target.checked }))}
+                                    className='mt-0.5 w-4 h-4 accent-black cursor-pointer'
+                                />
+                                <span>
+                                    <span className='block text-sm font-bold text-gray-700'>Has video</span>
+                                    <span className='block text-xs text-gray-400 mt-0.5'>Shows a play icon on this post&apos;s card in the blog list.</span>
+                                </span>
+                            </label>
+
                             <button
                                 type='submit'
                                 disabled={submitting}

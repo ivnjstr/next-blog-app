@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { assets } from "@/Assets/assets";
+import Avatar from "@/Components/Avatar";
 import axios from "axios";
 
 const SignupPage = () => {
@@ -84,13 +85,7 @@ const SignupPage = () => {
           <div className="flex flex-col items-center gap-2 mb-1">
             <label htmlFor="avatar" className="cursor-pointer group relative">
               <div className="relative w-20 h-20 rounded-full border-2 border-dashed border-gray-200 overflow-hidden bg-white group-hover:border-black transition-all">
-                <Image
-                  src={avatarPreview || assets.profile_icon}
-                  alt="Profile"
-                  fill
-                  className="object-cover"
-                  unoptimized={!!avatarFile}
-                />
+                <Avatar src={avatarPreview} name={name} fill unoptimized={!!avatarFile} />
               </div>
               <span className="absolute bottom-0 right-0 bg-black text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">EDIT</span>
             </label>

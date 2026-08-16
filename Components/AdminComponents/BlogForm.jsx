@@ -185,6 +185,19 @@ const BlogForm = ({
                                 </span>
                             </label>
 
+                            <label className='flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-black transition-all'>
+                                <input
+                                    type="checkbox"
+                                    checked={!!data.allowComments}
+                                    onChange={(e) => setData(data => ({ ...data, allowComments: e.target.checked }))}
+                                    className='mt-0.5 w-4 h-4 accent-black cursor-pointer'
+                                />
+                                <span>
+                                    <span className='block text-sm font-bold text-gray-700'>Allow comments</span>
+                                    <span className='block text-xs text-gray-400 mt-0.5'>Readers can comment on this post. Pre-filled from your default in Profile settings — you can override it here per post.</span>
+                                </span>
+                            </label>
+
                             <button
                                 type='submit'
                                 disabled={submitting}

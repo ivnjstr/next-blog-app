@@ -1,11 +1,10 @@
 'use client'
-import { assets } from '@/Assets/assets'
 import axios from 'axios'
-import Image from 'next/image'
 import React, { useEffect, useMemo, useState } from 'react'
 import { signOut, useSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
 import ConfirmDeleteModal from '@/Components/AdminComponents/ConfirmDeleteModal'
+import Avatar from '@/Components/Avatar'
 
 const Page = () => {
     const { update } = useSession();
@@ -13,7 +12,7 @@ const Page = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [avatarFile, setAvatarFile] = useState(null);
-    const [profile, setProfile] = useState({ name: "", email: "", role: "", image: "" });
+    const [profile, setProfile] = useState({ name: "", email: "", role: "", image: "", defaultAllowComments: true });
     const [passwords, setPasswords] = useState({ current: "", next: "", confirm: "" });
     const [deletePassword, setDeletePassword] = useState("");
     const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -49,6 +48,7 @@ const Page = () => {
         const formData = new FormData();
         formData.append('name', profile.name);
         formData.append('email', profile.email);
+        formData.append('defaultAllowComments', profile.defaultAllowComments);
         if (avatarFile) formData.append('image', avatarFile);
         if (passwords.next) {
             formData.append('currentPassword', passwords.current);
@@ -119,13 +119,7 @@ const Page = () => {
                 <div className='flex flex-col items-center gap-3 mb-8'>
                     <label htmlFor="avatar" className='cursor-pointer group relative'>
                         <div className="relative w-28 h-28 rounded-full border-2 border-dashed border-gray-200 overflow-hidden bg-white group-hover:border-black transition-all">
-                            <Image
-                                src={avatarPreview || assets.profile_icon}
-                                alt='Profile'
-                                fill
-                                className='object-cover'
-                                unoptimized={!!avatarFile}
-                            />
+                            <Avatar src={avatarPreview} name={profile.name} fill unoptimized={!!avatarFile} />
                         </div>
                         <span className='absolute bottom-0 right-0 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-full'>EDIT</span>
                     </label>
@@ -194,6 +188,19 @@ const Page = () => {
                             />
                         </div>
                     </div>
+
+                    <label className='flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-black transition-all'>
+                        <input
+                            type="checkbox"
+                            checked={!!profile.defaultAllowComments}
+                            onChange={(e) => setProfile(p => ({ ...p, defaultAllowComments: e.target.checked }))}
+                            className='mt-0.5 w-4 h-4 accent-black cursor-pointer'
+                        />
+                        <span>
+                            <span className='block text-sm font-bold text-gray-700'>Allow comments on new posts</span>
+                            <span className='block text-xs text-gray-400 mt-0.5'>This sets the default for posts you create from now on — it won&apos;t change posts you&apos;ve already published. You can still override it per post.</span>
+                        </span>
+                    </label>
 
                     <button
                         type='submit'

@@ -1,10 +1,9 @@
 'use client'
-import { assets } from '@/Assets/assets'
 import axios from 'axios'
-import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
+import Avatar from '@/Components/Avatar'
 
 const Page = () => {
     const { data: session } = useSession();
@@ -66,12 +65,11 @@ const Page = () => {
                             users.map((u) => (
                                 <div key={u._id} className='flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-5 py-4 sm:px-8 sm:py-5 hover:bg-gray-50/50 transition-colors'>
                                     <div className='flex items-center gap-3 w-56 shrink-0'>
-                                        <Image
-                                            width={32}
-                                            height={32}
-                                            src={u.image || assets.profile_icon}
-                                            alt={u.name}
-                                            className='rounded-full border border-gray-100 shadow-sm object-cover'
+                                        <Avatar
+                                            src={u.image}
+                                            name={u.name}
+                                            size={32}
+                                            className='border border-gray-100 shadow-sm'
                                         />
                                         <p className='text-sm font-semibold text-gray-900'>{u.name}</p>
                                     </div>

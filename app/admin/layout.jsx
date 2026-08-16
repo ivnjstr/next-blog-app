@@ -1,8 +1,7 @@
 'use client' // Added because we use signOut hooks
-import { assets } from "@/Assets/assets";
 import Sidebar from "@/Components/AdminComponents/Sidebar";
 import { Providers } from "@/Components/Providers";
-import Image from "next/image";
+import Avatar from "@/Components/Avatar";
 import Link from "next/link";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -33,14 +32,12 @@ export default function Layout({ children }) {
                                 <p className="text-xs font-bold text-gray-900 group-hover:underline">{session?.user?.name || "Admin"}</p>
                                 <p className="text-[10px] text-gray-400 capitalize">{session?.user?.role}</p>
                             </div>
-                            <div className="relative w-10 h-10">
-                                <Image
-                                    src={session?.user?.image || assets.profile_icon}
-                                    fill
-                                    alt="Profile"
-                                    className="rounded-full border border-gray-200 p-0.5 object-cover group-hover:border-black transition-all"
-                                />
-                            </div>
+                            <Avatar
+                                src={session?.user?.image}
+                                name={session?.user?.name}
+                                size={40}
+                                className="border border-gray-200 group-hover:border-black transition-all"
+                            />
                         </Link>
 
                         {/* Logout Button */}

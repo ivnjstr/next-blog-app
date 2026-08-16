@@ -24,9 +24,10 @@ const Page = ({ params }) => {
                     description: response.data.description || "",
                     category: response.data.category || "Startup",
                     author: response.data.author || "",
-                    authorImage: response.data.authorImage || "/author_img.png",
+                    authorImage: response.data.authorImage || "",
                     isFeatured: !!response.data.isFeatured,
-                    hasVideo: !!response.data.hasVideo
+                    hasVideo: !!response.data.hasVideo,
+                    allowComments: response.data.allowComments !== false
                 });
                 setExistingImageUrl(response.data.image || null);
             } catch (error) {
@@ -54,6 +55,7 @@ const Page = ({ params }) => {
         formData.append('authorImage', data.authorImage);
         formData.append('isFeatured', data.isFeatured);
         formData.append('hasVideo', data.hasVideo);
+        formData.append('allowComments', data.allowComments);
         if (image) formData.append('image', image);
 
         setSubmitting(true);

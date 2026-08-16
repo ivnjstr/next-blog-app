@@ -41,6 +41,11 @@ const Page = ({ params }) => {
             authorImage={data.authorImage}
             image={data.image}
             description={data.description}
+            postId={data._id}
+            postOwnerId={data.createdBy}
+            allowComments={data.allowComments}
+            likeCount={data.likeCount}
+            likedByCurrentUser={data.likedByCurrentUser}
           />
           <Footer />
         </>

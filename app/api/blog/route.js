@@ -1,5 +1,7 @@
 import { connectDB } from "@/lib/config/db";
 import BlogModel from "@/lib/models/BlogModel";
+import LikeModel from "@/lib/models/LikeModel";
+import CommentModel from "@/lib/models/CommentModel";
 import { getAuthUser } from "@/lib/getAuthUser";
 const { NextResponse } = require("next/server");
 
@@ -31,7 +33,12 @@ export async function GET(request) {
                 return NextResponse.json(null, { status: 404 });
             }
 
-            return NextResponse.json(blog);
+            const likeCount = await LikeModel.countDocuments({ targetType: "post", targetId: blog._id });
+            const likedByCurrentUser = dbUser
+                ? !!(await LikeModel.exists({ userId: dbUser._id, targetType: "post", targetId: blog._id }))
+                : false;
+
+            return NextResponse.json({ ...blog.toObject(), likeCount, likedByCurrentUser });
         }
 
         // The `scope` param is only a hint about intent — it is never itself
@@ -49,7 +56,29 @@ export async function GET(request) {
         }
 
         const blogs = await BlogModel.find(filter).lean();
-        return NextResponse.json({ blogs });
+
+        // Batched — one query for every post's like/comment count, not N+1.
+        const blogIds = blogs.map((b) => b._id);
+        const [likeCounts, commentCounts] = await Promise.all([
+            LikeModel.aggregate([
+                { $match: { targetType: "post", targetId: { $in: blogIds } } },
+                { $group: { _id: "$targetId", count: { $sum: 1 } } }
+            ]),
+            CommentModel.aggregate([
+                { $match: { postId: { $in: blogIds } } },
+                { $group: { _id: "$postId", count: { $sum: 1 } } }
+            ])
+        ]);
+        const likeCountById = new Map(likeCounts.map((l) => [String(l._id), l.count]));
+        const commentCountById = new Map(commentCounts.map((c) => [String(c._id), c.count]));
+
+        const blogsWithCounts = blogs.map((b) => ({
+            ...b,
+            likeCount: likeCountById.get(String(b._id)) || 0,
+            commentCount: commentCountById.get(String(b._id)) || 0
+        }));
+
+        return NextResponse.json({ blogs: blogsWithCounts });
     } catch (error) {
         console.log(error);
         return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
@@ -93,6 +122,12 @@ export async function POST(request) {
     // can never feature their own post, no matter what the client sends.
     const isFeatured = isAdmin && formData.get('isFeatured') === 'true';
     const hasVideo = formData.get('hasVideo') === 'true';
+    // The client always sends an explicit value (seeded from the user's
+    // default), but if it's ever missing, fall back to the user's current
+    // default rather than silently treating a missing field as "off".
+    const allowComments = formData.has('allowComments')
+      ? formData.get('allowComments') === 'true'
+      : dbUser.defaultAllowComments;
 
     const blogData = {
       title: formData.get('title'),
@@ -104,6 +139,7 @@ export async function POST(request) {
       authorImage: formData.get('authorImage'),
       isFeatured,
       hasVideo,
+      allowComments,
       createdBy: dbUser._id,
       status: isAdmin ? "published" : "pending"
     };
@@ -150,6 +186,13 @@ export async function PUT(request) {
 
     const isFeatured = isAdmin && formData.get('isFeatured') === 'true';
     const hasVideo = formData.get('hasVideo') === 'true';
+    // Editing an existing post: if the field is somehow missing, keep the
+    // post's current value rather than falling back to the user's (possibly
+    // since-changed) default — a per-post override must survive independent
+    // of later default changes.
+    const allowComments = formData.has('allowComments')
+      ? formData.get('allowComments') === 'true'
+      : blog.allowComments;
 
     const update = {
       title: formData.get('title'),
@@ -158,7 +201,8 @@ export async function PUT(request) {
       author: formData.get('author'),
       authorImage: formData.get('authorImage'),
       isFeatured,
-      hasVideo
+      hasVideo,
+      allowComments
     };
 
     // Admin edits never change moderation status. An author editing any of

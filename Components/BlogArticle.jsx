@@ -3,11 +3,19 @@ import { assets } from '@/Assets/assets'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import LikeButton from '@/Components/LikeButton'
+import CommentSection from '@/Components/CommentSection'
+import Avatar from '@/Components/Avatar'
 
 // Renders a blog post's hero + article body.
 // Shared by the real /blogs/[id] page and the admin "Add Blog" live preview
-// so both stay pixel-identical instead of drifting apart over time.
-const BlogArticle = ({ title, category, author, authorImage, image, description, showHeaderLink = true }) => {
+// so both stay pixel-identical instead of drifting apart over time. Likes
+// and comments only render when postId is present — the admin live preview
+// (an unsaved draft) has no real post to attach them to.
+const BlogArticle = ({
+    title, category, author, authorImage, image, description, showHeaderLink = true,
+    postId, postOwnerId, allowComments, likeCount, likedByCurrentUser
+}) => {
     const { data: session } = useSession();
     return (
         <div className="bg-white min-h-screen">
@@ -38,9 +46,7 @@ const BlogArticle = ({ title, category, author, authorImage, image, description,
                     </h1>
 
                     <div className="flex flex-col items-center">
-                        {authorImage && (
-                            <Image src={authorImage} alt={author} width={50} height={50} className='rounded-full border-2 border-white shadow-md' />
-                        )}
+                        <Avatar src={authorImage} name={author} size={50} className='border-2 border-white shadow-md' />
                         <p className='mt-3 text-gray-600 font-medium italic'>by {author}</p>
                     </div>
                 </div>
@@ -70,8 +76,19 @@ const BlogArticle = ({ title, category, author, authorImage, image, description,
                 >
                 </div>
 
+                {postId && (
+                    <div className='mt-16 pt-8 border-t border-gray-100'>
+                        <LikeButton
+                            targetType='post'
+                            targetId={postId}
+                            initialLiked={likedByCurrentUser}
+                            initialCount={likeCount}
+                        />
+                    </div>
+                )}
+
                 {/* Social Sharing Section */}
-                <div className='mt-20 py-10 border-t border-gray-100'>
+                <div className='mt-8 py-10 border-t border-gray-100'>
                     <p className='text-gray-400 uppercase text-[10px] tracking-widest font-bold mb-6'>Share this story</p>
                     <div className='flex gap-4'>
                         <Image src={assets.facebook_icon} alt='FB' width={32} className='cursor-pointer hover:opacity-70 transition-opacity' />
@@ -79,6 +96,10 @@ const BlogArticle = ({ title, category, author, authorImage, image, description,
                         <Image src={assets.googleplus_icon} alt='GP' width={32} className='cursor-pointer hover:opacity-70 transition-opacity' />
                     </div>
                 </div>
+
+                {postId && (
+                    <CommentSection postId={postId} postOwnerId={postOwnerId} allowComments={allowComments} />
+                )}
             </article>
         </div>
     )

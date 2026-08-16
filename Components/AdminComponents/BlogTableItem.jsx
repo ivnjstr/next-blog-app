@@ -1,8 +1,8 @@
-import { assets } from '@/Assets/assets'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
+import Avatar from '@/Components/Avatar'
 
 const STATUS_STYLES = {
     pending: 'bg-amber-50 text-amber-600',
@@ -21,12 +21,11 @@ const BlogTableItem = ({ authorImage, title, author, date, image, category, isFe
 
             {/* Author - desktop only */}
             <div className='hidden sm:flex items-center gap-3 w-40 shrink-0'>
-                <Image
-                    width={32}
-                    height={32}
-                    src={authorImage ? authorImage : assets.profile_icon}
-                    alt={author}
-                    className='rounded-full border border-gray-100 shadow-sm'
+                <Avatar
+                    src={authorImage}
+                    name={author}
+                    size={32}
+                    className='border border-gray-100 shadow-sm'
                 />
                 <p className='text-sm font-semibold text-gray-900'>{author || "Anonymous"}</p>
             </div>

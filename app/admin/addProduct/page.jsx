@@ -12,7 +12,8 @@ const INITIAL_DATA = {
     author: "",
     authorImage: "",
     isFeatured: false,
-    hasVideo: false
+    hasVideo: false,
+    allowComments: true
 }
 
 const Page = () => {
@@ -28,10 +29,24 @@ const Page = () => {
             setData(data => ({
                 ...data,
                 author: data.author || session.user.name || "",
-                authorImage: data.authorImage || session.user.image || "/author_img.png"
+                authorImage: data.authorImage || session.user.image || ""
             }));
         }
     }, [session]);
+
+    // defaultAllowComments lives in the DB, not the session/JWT, so it
+    // needs its own fetch to pre-fill new posts with the user's setting.
+    useEffect(() => {
+        const fetchDefault = async () => {
+            try {
+                const res = await axios.get('/api/profile');
+                setData(data => ({ ...data, allowComments: res.data.defaultAllowComments }));
+            } catch (error) {
+                // Keep the INITIAL_DATA fallback (true) if this fails.
+            }
+        };
+        fetchDefault();
+    }, []);
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
@@ -49,6 +64,7 @@ const Page = () => {
         formData.append('authorImage', data.authorImage);
         formData.append('isFeatured', data.isFeatured);
         formData.append('hasVideo', data.hasVideo);
+        formData.append('allowComments', data.allowComments);
         formData.append('image', image);
 
         setSubmitting(true);
@@ -57,7 +73,7 @@ const Page = () => {
             if (response.data.success) {
                 toast.success(response.data.msg);
                 setImage(false);
-                setData(data => ({ ...INITIAL_DATA, author: data.author, authorImage: data.authorImage }));
+                setData(data => ({ ...INITIAL_DATA, author: data.author, authorImage: data.authorImage, allowComments: data.allowComments }));
             } else {
                 toast.error("Error");
             }

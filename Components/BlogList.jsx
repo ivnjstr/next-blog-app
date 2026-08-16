@@ -64,7 +64,10 @@ const BlogList = () => {
                                         category={item.category}
                                         isFeatured={isFeatured}
                                         hasVideo={item.hasVideo}
+                                        author={item.author}
                                         authorImage={item.authorImage}
+                                        likeCount={item.likeCount}
+                                        commentCount={item.commentCount}
                                     />
                                 </div>
                             )

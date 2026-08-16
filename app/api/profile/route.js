@@ -5,6 +5,9 @@ import { authOptions } from "@/lib/authOptions";
 import { connectDB } from "@/lib/config/db";
 import UserModel from "@/lib/models/UserModel";
 import BlogModel from "@/lib/models/BlogModel";
+import LikeModel from "@/lib/models/LikeModel";
+import CommentModel from "@/lib/models/CommentModel";
+import { deleteCommentsByIds } from "@/lib/commentCascade";
 import cloudinary from "@/lib/cloudinary";
 
 // Returns the logged-in user's own profile. Identity comes from the
@@ -26,7 +29,8 @@ export async function GET() {
         name: user.name,
         email: user.email,
         role: user.role,
-        image: user.image
+        image: user.image,
+        defaultAllowComments: user.defaultAllowComments
     });
 }
 
@@ -49,10 +53,14 @@ export async function PUT(request) {
         const image = formData.get("image");
         const currentPassword = formData.get("currentPassword");
         const newPassword = formData.get("newPassword");
+        const defaultAllowComments = formData.get("defaultAllowComments");
 
         const update = {};
 
         if (name) update.name = name;
+
+        // Only applies to posts created from now on — never touches existing posts.
+        if (defaultAllowComments !== null) update.defaultAllowComments = defaultAllowComments === "true";
 
         if (email && email !== user.email) {
             const existing = await UserModel.findOne({ email });
@@ -104,7 +112,8 @@ export async function PUT(request) {
                 name: updatedUser.name,
                 email: updatedUser.email,
                 role: updatedUser.role,
-                image: updatedUser.image
+                image: updatedUser.image,
+                defaultAllowComments: updatedUser.defaultAllowComments
             }
         });
     } catch (error) {
@@ -166,6 +175,25 @@ export async function DELETE(request) {
                 cleanupFailures.push(user.image_public_id);
             }
         }
+
+        // Comments/likes cleanup — pure MongoDB deletes, no external network
+        // calls involved (unlike Cloudinary above), so no failure-tolerant
+        // handling needed here. Two sources of orphaned data to cover:
+        // (1) comments left on posts that are about to be deleted, and
+        // (2) this user's own comments/likes anywhere else on the site.
+        const ownPostIds = ownPosts.map((post) => post._id);
+
+        const commentsOnOwnPosts = await CommentModel.find({ postId: { $in: ownPostIds } }).select("_id");
+        const commentsByUser = await CommentModel.find({ userId: user._id }).select("_id");
+        const commentIdsToDelete = [
+            ...new Map(
+                [...commentsOnOwnPosts, ...commentsByUser].map((c) => [String(c._id), c._id])
+            ).values()
+        ];
+        await deleteCommentsByIds(commentIdsToDelete);
+
+        await LikeModel.deleteMany({ targetType: "post", targetId: { $in: ownPostIds } });
+        await LikeModel.deleteMany({ userId: user._id });
 
         // Proceed with deleting the account regardless of Cloudinary outcome —
         // an orphaned image is a minor, manually-fixable issue, whereas leaving

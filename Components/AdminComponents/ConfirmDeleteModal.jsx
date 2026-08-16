@@ -1,7 +1,7 @@
 'use client'
 import { createPortal } from 'react-dom'
 
-const ConfirmDeleteModal = ({ title, onCancel, onConfirm }) => {
+const ConfirmDeleteModal = ({ title, heading = 'Delete this post?', message, confirmLabel = 'Yes, delete', onCancel, onConfirm }) => {
     if (typeof document === 'undefined') return null
 
     return createPortal(
@@ -13,9 +13,9 @@ const ConfirmDeleteModal = ({ title, onCancel, onConfirm }) => {
                 className='w-full max-w-sm bg-white rounded-2xl shadow-xl p-6'
                 onClick={(e) => e.stopPropagation()}
             >
-                <h3 className='text-lg font-bold text-gray-900 mb-2'>Delete this post?</h3>
+                <h3 className='text-lg font-bold text-gray-900 mb-2'>{heading}</h3>
                 <p className='text-sm text-gray-500 mb-6'>
-                    {title ? <>&quot;<span className='font-semibold text-gray-700'>{title}</span>&quot; will be permanently removed. This can&apos;t be undone.</> : "This post will be permanently removed. This can't be undone."}
+                    {message || (title ? <>&quot;<span className='font-semibold text-gray-700'>{title}</span>&quot; will be permanently removed. This can&apos;t be undone.</> : "This post will be permanently removed. This can't be undone.")}
                 </p>
                 <div className='flex justify-end gap-3'>
                     <button
@@ -28,7 +28,7 @@ const ConfirmDeleteModal = ({ title, onCancel, onConfirm }) => {
                         onClick={onConfirm}
                         className='px-4 py-2 text-sm font-bold text-white bg-red-500 rounded-xl hover:bg-red-600 transition-all'
                     >
-                        Yes, delete
+                        {confirmLabel}
                     </button>
                 </div>
             </div>

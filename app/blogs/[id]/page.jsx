@@ -10,8 +10,12 @@ const Page = ({ params }) => {
   const [data, setData] = useState(null)
 
   const fetchBlogData = async () => {
-    const response = await axios.get('/api/blog', { params: { id } })
-    setData(response.data);
+    try {
+      const response = await axios.get('/api/blog', { params: { id } })
+      setData(response.data);
+    } catch (error) {
+      setData(null);
+    }
   }
 
   useEffect(() => {

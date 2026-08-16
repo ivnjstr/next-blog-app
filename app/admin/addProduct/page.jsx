@@ -1,6 +1,7 @@
 'use client'
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
 import BlogForm, { EMPTY_DESCRIPTION } from '@/Components/AdminComponents/BlogForm'
 
@@ -8,16 +9,29 @@ const INITIAL_DATA = {
     title: "",
     description: "",
     category: "Startup",
-    author: "Ivan Jester",
-    authorImage: "/profile_img.jpg",
+    author: "",
+    authorImage: "",
     isFeatured: false,
     hasVideo: false
 }
 
 const Page = () => {
+    const { data: session } = useSession();
     const [image, setImage] = useState(false);
     const [data, setData] = useState(INITIAL_DATA)
     const [submitting, setSubmitting] = useState(false);
+
+    // Attribute new posts to whoever is actually logged in, not a
+    // hardcoded name — this form is now used by every author, not just one.
+    useEffect(() => {
+        if (session?.user) {
+            setData(data => ({
+                ...data,
+                author: data.author || session.user.name || "",
+                authorImage: data.authorImage || session.user.image || "/profile_img.jpg"
+            }));
+        }
+    }, [session]);
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
@@ -43,7 +57,7 @@ const Page = () => {
             if (response.data.success) {
                 toast.success(response.data.msg);
                 setImage(false);
-                setData(INITIAL_DATA);
+                setData(data => ({ ...INITIAL_DATA, author: data.author, authorImage: data.authorImage }));
             } else {
                 toast.error("Error");
             }

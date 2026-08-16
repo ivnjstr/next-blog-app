@@ -4,30 +4,44 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { assets } from "@/Assets/assets";
+import axios from "axios";
 
-const LoginPage = () => {
+const SignupPage = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleCredentialsLogin = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
     setSubmitting(true);
 
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      callbackUrl: "/admin",
-    });
+    try {
+      const res = await axios.post("/api/auth/register", { name, email, password });
+      if (!res.data.success) {
+        setError(res.data.msg || "Something went wrong.");
+        setSubmitting(false);
+        return;
+      }
 
-    if (res?.error) {
-      setError("That email or password isn't right. Please try again.");
+      const signInRes = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/admin",
+      });
+
+      if (signInRes?.error) {
+        setError("Account created, but automatic sign-in failed. Please log in.");
+        setSubmitting(false);
+      } else if (signInRes?.url) {
+        window.location.href = signInRes.url;
+      }
+    } catch (err) {
+      setError(err.response?.data?.msg || "Something went wrong.");
       setSubmitting(false);
-    } else if (res?.url) {
-      window.location.href = res.url;
     }
   };
 
@@ -45,10 +59,18 @@ const LoginPage = () => {
           </div>
         )}
 
-        <form onSubmit={handleCredentialsLogin} className="flex flex-col gap-4">
+        <form onSubmit={handleSignup} className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Full Name"
+            className={`p-3 rounded-xl border outline-none transition-all ${error ? 'border-red-200 focus:border-red-400' : 'border-gray-200 focus:border-black'}`}
+            value={name}
+            onChange={(e) => { setName(e.target.value); setError(""); }}
+            required
+          />
           <input
             type="email"
-            placeholder="Admin Email"
+            placeholder="Email"
             className={`p-3 rounded-xl border outline-none transition-all ${error ? 'border-red-200 focus:border-red-400' : 'border-gray-200 focus:border-black'}`}
             value={email}
             onChange={(e) => { setEmail(e.target.value); setError(""); }}
@@ -67,16 +89,16 @@ const LoginPage = () => {
             disabled={submitting}
             className="bg-black text-white py-3 rounded-xl font-bold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? "Signing in..." : "Login as Admin"}
+            {submitting ? "Creating account..." : "Create Account"}
           </button>
         </form>
 
         <p className="text-center text-sm text-gray-500 mt-6">
-          Don&apos;t have an account? <Link href="/signup" className="font-bold text-black hover:underline">Sign up</Link>
+          Already have an account? <Link href="/login" className="font-bold text-black hover:underline">Log in</Link>
         </p>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default SignupPage;

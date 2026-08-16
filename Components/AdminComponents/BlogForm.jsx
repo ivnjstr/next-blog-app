@@ -2,6 +2,7 @@
 import { assets } from '@/Assets/assets'
 import Image from 'next/image'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useSession } from 'next-auth/react'
 import RichTextEditor from '@/Components/AdminComponents/RichTextEditor'
 import BlogArticle from '@/Components/BlogArticle'
 
@@ -68,6 +69,8 @@ const BlogForm = ({
     heading,
     subheading
 }) => {
+    const { data: session } = useSession();
+    const isAdmin = session?.user?.role === 'admin';
     const [view, setView] = useState('edit'); // mobile-only: 'edit' | 'preview'
 
     const previewImage = useMemo(
@@ -154,18 +157,20 @@ const BlogForm = ({
                                 />
                             </div>
 
-                            <label className='flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-black transition-all'>
-                                <input
-                                    type="checkbox"
-                                    checked={!!data.isFeatured}
-                                    onChange={(e) => setData(data => ({ ...data, isFeatured: e.target.checked }))}
-                                    className='mt-0.5 w-4 h-4 accent-black cursor-pointer'
-                                />
-                                <span>
-                                    <span className='block text-sm font-bold text-gray-700'>Feature this post</span>
-                                    <span className='block text-xs text-gray-400 mt-0.5'>Shown in the large spot at the top of the homepage. Only one post can be featured — selecting this will unfeature the current one.</span>
-                                </span>
-                            </label>
+                            {isAdmin && (
+                                <label className='flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-black transition-all'>
+                                    <input
+                                        type="checkbox"
+                                        checked={!!data.isFeatured}
+                                        onChange={(e) => setData(data => ({ ...data, isFeatured: e.target.checked }))}
+                                        className='mt-0.5 w-4 h-4 accent-black cursor-pointer'
+                                    />
+                                    <span>
+                                        <span className='block text-sm font-bold text-gray-700'>Feature this post</span>
+                                        <span className='block text-xs text-gray-400 mt-0.5'>Shown in the large spot at the top of the homepage. Only one post can be featured — selecting this will unfeature the current one.</span>
+                                    </span>
+                                </label>
+                            )}
 
                             <label className='flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-black transition-all'>
                                 <input

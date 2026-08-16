@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:admin": "node --env-file=.env.local scripts/seedAdmin.mjs"
+    "seed:admin": "node --env-file=.env.local scripts/seedAdmin.mjs",
+    "migrate:blog-ownership": "node --env-file=.env.local scripts/backfillBlogOwnership.mjs"
   },
   "dependencies": {
     "@tiptap/extension-image": "^3.30.1",

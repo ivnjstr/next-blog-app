@@ -3,8 +3,9 @@ import { assets } from '@/Assets/assets'
 import axios from 'axios'
 import Image from 'next/image'
 import React, { useEffect, useMemo, useState } from 'react'
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
+import ConfirmDeleteModal from '@/Components/AdminComponents/ConfirmDeleteModal'
 
 const Page = () => {
     const { update } = useSession();
@@ -14,6 +15,9 @@ const Page = () => {
     const [avatarFile, setAvatarFile] = useState(null);
     const [profile, setProfile] = useState({ name: "", email: "", role: "", image: "" });
     const [passwords, setPasswords] = useState({ current: "", next: "", confirm: "" });
+    const [deletePassword, setDeletePassword] = useState("");
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const avatarPreview = useMemo(
         () => (avatarFile ? URL.createObjectURL(avatarFile) : profile.image),
@@ -73,6 +77,24 @@ const Page = () => {
             toast.error(error.response?.data?.msg || "Something went wrong.");
         } finally {
             setSaving(false);
+        }
+    }
+
+    const deleteAccount = async () => {
+        setConfirmingDelete(false);
+        setDeleting(true);
+        try {
+            const res = await axios.delete('/api/profile', { data: { currentPassword: deletePassword } });
+            if (res.data.success) {
+                toast.success(res.data.msg);
+                await signOut({ callbackUrl: '/' });
+            } else {
+                toast.error(res.data.msg || "Deletion failed");
+                setDeleting(false);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.msg || "Something went wrong.");
+            setDeleting(false);
         }
     }
 
@@ -182,6 +204,40 @@ const Page = () => {
                     </button>
                 </div>
             </form>
+
+            <div className='pt-8 px-6 sm:pl-16 max-w-[600px]'>
+                <div className='flex flex-col gap-4 bg-white p-8 rounded-2xl border border-red-100 shadow-sm'>
+                    <div>
+                        <p className='text-sm font-bold text-red-600'>Danger Zone</p>
+                        <p className='text-xs text-gray-400 mt-1'>Deleting your account permanently removes it and every post you&apos;ve written. This can&apos;t be undone.</p>
+                    </div>
+                    <input
+                        className='w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-black transition-all'
+                        type="password"
+                        placeholder='Enter your password to confirm'
+                        value={deletePassword}
+                        onChange={(e) => setDeletePassword(e.target.value)}
+                    />
+                    <button
+                        type='button'
+                        disabled={deleting || !deletePassword}
+                        onClick={() => setConfirmingDelete(true)}
+                        className='w-full sm:w-56 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed'
+                    >
+                        {deleting ? 'DELETING...' : 'DELETE MY ACCOUNT'}
+                    </button>
+                </div>
+            </div>
+
+            {confirmingDelete && (
+                <ConfirmDeleteModal
+                    heading='Delete your account?'
+                    message={"Your account and every post you've written will be permanently removed. This can't be undone."}
+                    confirmLabel='Yes, delete my account'
+                    onCancel={() => setConfirmingDelete(false)}
+                    onConfirm={deleteAccount}
+                />
+            )}
         </div>
     )
 }

@@ -5,6 +5,7 @@ import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
 
 const DashboardIcon = ({ className }) => (
@@ -16,8 +17,18 @@ const DashboardIcon = ({ className }) => (
     </svg>
 )
 
+const UsersIcon = ({ className }) => (
+    <svg viewBox="0 0 20 20" fill="none" className={className} width={20} height={20}>
+        <circle cx="7" cy="6" r="3" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M2 17c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <circle cx="14.5" cy="7" r="2.25" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M13 12.2c2.3.35 4 2.2 4 4.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+)
+
 const Sidebar = () => {
     const pathname = usePathname();
+    const { data: session } = useSession();
     const [isOpen, setIsOpen] = useState(false); // State for mobile toggle
     const [stats, setStats] = useState({ blogs: 0, subs: 0 });
 
@@ -43,7 +54,10 @@ const Sidebar = () => {
         { name: 'Dashboard', href: '/admin', isDashboard: true },
         { name: 'Add blogs', href: '/admin/addProduct', icon: assets.add_icon },
         { name: 'Blog lists', href: '/admin/bloglist', icon: assets.blog_icon },
-        { name: 'Subscriptions', href: '/admin/subscriptions', icon: assets.email_icon },
+        ...(session?.user?.role === 'admin' ? [
+            { name: 'Subscriptions', href: '/admin/subscriptions', icon: assets.email_icon },
+            { name: 'Users', href: '/admin/users', isUsers: true },
+        ] : []),
     ];
 
     return (
@@ -104,6 +118,8 @@ const Sidebar = () => {
                                     <div className={`p-1 rounded-md ${isActive ? 'bg-white/20' : 'bg-transparent'}`}>
                                         {item.isDashboard ? (
                                             <DashboardIcon className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-black'} />
+                                        ) : item.isUsers ? (
+                                            <UsersIcon className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-black'} />
                                         ) : (
                                             <Image
                                                 src={item.icon}

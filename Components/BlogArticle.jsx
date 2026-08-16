@@ -44,8 +44,8 @@ const BlogArticle = ({ title, category, author, authorImage, image, description,
             </div>
 
             {/* Featured Image - Overlapping look */}
-            {image && (
-                <div className='max-w-5xl mx-auto px-5 -mt-16 mb-16'>
+            <div className='max-w-5xl mx-auto px-5 -mt-16 mb-16'>
+                {image ? (
                     <Image
                         className='rounded-3xl shadow-2xl object-cover aspect-video border-[8px] border-white'
                         src={image}
@@ -54,8 +54,10 @@ const BlogArticle = ({ title, category, author, authorImage, image, description,
                         alt='Featured'
                         unoptimized={typeof image === 'string' && image.startsWith('blob:')}
                     />
-                </div>
-            )}
+                ) : (
+                    <div className='rounded-3xl shadow-2xl aspect-video border-[8px] border-white bg-gray-200' />
+                )}
+            </div>
 
             {/* Article Content */}
             <article className='max-w-5xl mx-auto px-6 mb-20'>

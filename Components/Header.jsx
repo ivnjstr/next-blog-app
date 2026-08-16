@@ -1,11 +1,14 @@
+'use client'
 import { assets } from '@/Assets/assets'
 import axios from 'axios';
 import Image from 'next/image'
 import Link from 'next/link';
 import React, { useState } from 'react'
 import { toast } from 'react-toastify';
+import { useSession } from 'next-auth/react';
 
 const Header = () => {
+  const { data: session } = useSession();
   const [email, setEmail] = useState("");
 
   const onSubmitHandler = async (e) => {
@@ -27,9 +30,9 @@ const Header = () => {
       {/* Navbar Section */}
       <div className='flex justify-between items-center max-w-7xl mx-auto'>
         <Image src={assets.logo} width={140} alt='Logo' className='w-28 sm:w-36' />
-        <Link href='/admin' >
+        <Link href={session ? '/admin' : '/signup'}>
         <button className='flex items-center gap-2 font-semibold py-2 px-5 sm:px-8 bg-black text-white rounded-full hover:bg-gray-800 transition-all text-sm'>
-          Get Started <Image src={assets.arrow} alt='' className='invert w-3' />
+          {session ? 'Dashboard' : 'Get Started'} <Image src={assets.arrow} alt='' className='invert w-3' />
         </button>
         </Link>
        

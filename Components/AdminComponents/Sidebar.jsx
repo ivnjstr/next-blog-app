@@ -36,7 +36,7 @@ const Sidebar = () => {
         const fetchStats = async () => {
             try {
                 const [blogRes, emailRes] = await Promise.all([
-                    axios.get('/api/blog'),
+                    axios.get('/api/blog', { params: { scope: 'admin' } }),
                     axios.get('/api/email')
                 ]);
                 setStats({
@@ -154,8 +154,6 @@ const Sidebar = () => {
                         </div>
                         <Link
                             href='/'
-                            target='_blank'
-                            rel='noopener noreferrer'
                             className='block text-center text-[11px] font-bold bg-white border border-gray-200 rounded-xl py-2.5 hover:bg-black hover:text-white hover:border-black transition-all'
                         >
                             View Live Site ↗

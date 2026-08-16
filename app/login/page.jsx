@@ -48,7 +48,7 @@ const LoginPage = () => {
         <form onSubmit={handleCredentialsLogin} className="flex flex-col gap-4">
           <input
             type="email"
-            placeholder="Admin Email"
+            placeholder="Email"
             className={`p-3 rounded-xl border outline-none transition-all ${error ? 'border-red-200 focus:border-red-400' : 'border-gray-200 focus:border-black'}`}
             value={email}
             onChange={(e) => { setEmail(e.target.value); setError(""); }}
@@ -67,7 +67,7 @@ const LoginPage = () => {
             disabled={submitting}
             className="bg-black text-white py-3 rounded-xl font-bold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? "Signing in..." : "Login as Admin"}
+            {submitting ? "Signing in..." : "Log in"}
           </button>
         </form>
 

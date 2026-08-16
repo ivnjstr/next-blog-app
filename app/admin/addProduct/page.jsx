@@ -28,7 +28,7 @@ const Page = () => {
             setData(data => ({
                 ...data,
                 author: data.author || session.user.name || "",
-                authorImage: data.authorImage || session.user.image || "/profile_img.jpg"
+                authorImage: data.authorImage || session.user.image || "/author_img.png"
             }));
         }
     }, [session]);

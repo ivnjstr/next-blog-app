@@ -1,6 +1,6 @@
 'use client'
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { assets } from "@/Assets/assets";
@@ -10,16 +10,36 @@ const SignupPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [avatarFile, setAvatarFile] = useState(null);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const avatarPreview = useMemo(
+    () => (avatarFile ? URL.createObjectURL(avatarFile) : null),
+    [avatarFile]
+  );
 
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (password !== confirmPassword) {
+      setError("Password and confirmation don't match.");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
-      const res = await axios.post("/api/auth/register", { name, email, password });
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("confirmPassword", confirmPassword);
+      if (avatarFile) formData.append("image", avatarFile);
+
+      const res = await axios.post("/api/auth/register", formData);
       if (!res.data.success) {
         setError(res.data.msg || "Something went wrong.");
         setSubmitting(false);
@@ -60,6 +80,24 @@ const SignupPage = () => {
         )}
 
         <form onSubmit={handleSignup} className="flex flex-col gap-4">
+          {/* Optional avatar */}
+          <div className="flex flex-col items-center gap-2 mb-1">
+            <label htmlFor="avatar" className="cursor-pointer group relative">
+              <div className="relative w-20 h-20 rounded-full border-2 border-dashed border-gray-200 overflow-hidden bg-white group-hover:border-black transition-all">
+                <Image
+                  src={avatarPreview || assets.profile_icon}
+                  alt="Profile"
+                  fill
+                  className="object-cover"
+                  unoptimized={!!avatarFile}
+                />
+              </div>
+              <span className="absolute bottom-0 right-0 bg-black text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">EDIT</span>
+            </label>
+            <input onChange={(e) => setAvatarFile(e.target.files[0])} type="file" id="avatar" accept="image/*" hidden />
+            <p className="text-[11px] text-gray-400">Profile picture (optional)</p>
+          </div>
+
           <input
             type="text"
             placeholder="Full Name"
@@ -82,6 +120,14 @@ const SignupPage = () => {
             className={`p-3 rounded-xl border outline-none transition-all ${error ? 'border-red-200 focus:border-red-400' : 'border-gray-200 focus:border-black'}`}
             value={password}
             onChange={(e) => { setPassword(e.target.value); setError(""); }}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            className={`p-3 rounded-xl border outline-none transition-all ${error ? 'border-red-200 focus:border-red-400' : 'border-gray-200 focus:border-black'}`}
+            value={confirmPassword}
+            onChange={(e) => { setConfirmPassword(e.target.value); setError(""); }}
             required
           />
           <button

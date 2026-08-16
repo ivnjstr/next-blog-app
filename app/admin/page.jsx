@@ -4,17 +4,23 @@ import axios from 'axios'
 import Image from 'next/image'
 import { assets } from '@/Assets/assets'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 const Dashboard = () => {
+  const { data: session } = useSession();
   const [stats, setStats] = useState({
     blogs: 0,
     subs: 0
   });
+  const [statsLoaded, setStatsLoaded] = useState(false);
 
   // Fetching data to show real numbers on the dashboard
   const fetchStats = async () => {
     try {
-      const blogRes = await axios.get('/api/blog');
+      // scope=admin resolves per-role on the server: an admin sees every
+      // post (any status), an author sees only their own — so this count
+      // is always "this user's relevant total", not a sitewide published count.
+      const blogRes = await axios.get('/api/blog', { params: { scope: 'admin' } });
       const emailRes = await axios.get('/api/email');
       setStats({
         blogs: blogRes.data.blogs.length,
@@ -22,6 +28,8 @@ const Dashboard = () => {
       });
     } catch (error) {
       console.error("Error fetching dashboard stats", error);
+    } finally {
+      setStatsLoaded(true);
     }
   }
 
@@ -29,16 +37,20 @@ const Dashboard = () => {
     fetchStats();
   }, []);
 
+  const isFirstTime = statsLoaded && stats.blogs === 0;
+
   return (
     <div className='flex-1 bg-[#fcfcfc] min-h-screen pt-8 px-6 sm:pt-12 sm:pl-16'>
       <div className='mb-10'>
-        <h1 className='text-3xl font-bold text-gray-900'>Welcome back, Editor</h1>
-        <p className='text-gray-500 mt-2'>Here is what's happening with your publication today.</p>
+        <h1 className='text-3xl font-bold text-gray-900'>Welcome back, {session?.user?.name || 'there'}</h1>
+        <p className='text-gray-500 mt-2'>
+          {isFirstTime ? "Ready to publish your first story?" : "Here is what's happening with your publication today."}
+        </p>
       </div>
 
       {/* Stats Grid */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
-        
+
         {/* Blog Count Card */}
         <div className='bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow'>
           <div className='flex items-center gap-4 mb-4'>
@@ -66,7 +78,7 @@ const Dashboard = () => {
            <div className='p-3 bg-white/10 rounded-2xl mb-2 group-hover:scale-110 transition-transform'>
               <Image src={assets.add_icon} width={24} alt='' className='invert' />
            </div>
-           <p className='text-white font-bold'>Create New Post</p>
+           <p className='text-white font-bold'>{isFirstTime ? 'Create your first post' : 'Create New Post'}</p>
            <p className='text-gray-400 text-xs mt-1'>Share a new story with the world</p>
         </Link>
 

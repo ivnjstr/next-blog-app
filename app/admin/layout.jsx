@@ -23,7 +23,7 @@ export default function Layout({ children }) {
                     <div className="flex items-center gap-2 pl-12 sm:pl-0">
                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                         <h3 className="font-bold text-sm uppercase tracking-widest text-gray-500">
-                            Admin Console
+                            Console
                         </h3>
                     </div>
 
@@ -31,7 +31,7 @@ export default function Layout({ children }) {
                         <Link href="/admin/profile" className="flex items-center gap-3 group">
                             <div className="text-right hidden sm:block">
                                 <p className="text-xs font-bold text-gray-900 group-hover:underline">{session?.user?.name || "Admin"}</p>
-                                <p className="text-[10px] text-gray-400 capitalize">{session?.user?.role || "editor"}</p>
+                                <p className="text-[10px] text-gray-400 capitalize">{session?.user?.role}</p>
                             </div>
                             <div className="relative w-10 h-10">
                                 <Image

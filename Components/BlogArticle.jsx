@@ -1,11 +1,14 @@
+'use client'
 import { assets } from '@/Assets/assets'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 // Renders a blog post's hero + article body.
 // Shared by the real /blogs/[id] page and the admin "Add Blog" live preview
 // so both stay pixel-identical instead of drifting apart over time.
 const BlogArticle = ({ title, category, author, authorImage, image, description, showHeaderLink = true }) => {
+    const { data: session } = useSession();
     return (
         <div className="bg-white min-h-screen">
             {/* Transparent Header Over soft background */}
@@ -19,9 +22,9 @@ const BlogArticle = ({ title, category, author, authorImage, image, description,
                         <Image src={assets.logo} alt='Logo' width={140} className='w-28 sm:w-36' />
                     )}
                     {showHeaderLink && (
-                        <Link href={'/admin'}>
+                        <Link href={session ? '/admin' : '/signup'}>
                             <button className='flex items-center gap-2 font-semibold py-2 px-5 sm:px-8 bg-black text-white rounded-full hover:bg-gray-800 transition-all text-sm'>
-                                Get Started <Image src={assets.arrow} alt='' className='invert w-3' />
+                                {session ? 'Dashboard' : 'Get Started'} <Image src={assets.arrow} alt='' className='invert w-3' />
                             </button>
                         </Link>
                     )}

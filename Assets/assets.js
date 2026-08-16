@@ -17,8 +17,9 @@ import blog_pic_16 from './blog_pic_16.png';
 import facebook_icon from './facebook_icon.png'
 import googleplus_icon from './googleplus_icon.png'
 import twitter_icon from './twitter_icon.png'
-import profile_icon2 from './profile_icon.png'
-import profile_icon from './profile_img.jpg'
+// Generic placeholder avatar — used as the fallback anywhere a user hasn't
+// uploaded their own photo, so new signups don't inherit someone else's.
+import profile_icon from './profile_icon.png'
 import logo from './logo.png'
 import arrow from './arrow.png'
 import logo_light from './logo_light.png'

@@ -23,8 +23,8 @@ const Page = ({ params }) => {
                     title: response.data.title || "",
                     description: response.data.description || "",
                     category: response.data.category || "Startup",
-                    author: response.data.author || "Ivan Jester",
-                    authorImage: response.data.authorImage || "/profile_img.jpg",
+                    author: response.data.author || "",
+                    authorImage: response.data.authorImage || "/author_img.png",
                     isFeatured: !!response.data.isFeatured,
                     hasVideo: !!response.data.hasVideo
                 });

@@ -29,6 +29,7 @@ const Avatar = ({ src, name, size = 36, className = '', fill = false, unoptimize
                 alt={name || 'User'}
                 width={size}
                 height={size}
+                style={{ width: size, height: size }}
                 className={`rounded-full object-cover shrink-0 ${className}`}
             />
         );

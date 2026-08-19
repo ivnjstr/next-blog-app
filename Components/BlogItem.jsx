@@ -19,7 +19,7 @@ const BlogItem = ({title, category, image, id, isFeatured, hasVideo, author, aut
   return (
     <Link
       href={`/blogs/${id}`}
-      className="relative group block w-full h-[350px] md:h-[400px] overflow-hidden rounded-2xl bg-gray-200"
+      className="relative group block w-full h-[350px] md:h-[400px] overflow-hidden rounded-2xl bg-gray-200 dark:bg-gray-800"
     >
       {/* Background Image */}
       <Image

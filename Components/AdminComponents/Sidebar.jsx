@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
+import ThemeToggle from '@/Components/ThemeToggle'
 
 const DashboardIcon = ({ className }) => (
     <svg viewBox="0 0 20 20" fill="none" className={className} width={20} height={20}>
@@ -63,20 +64,20 @@ const Sidebar = () => {
     return (
         <>
             {/* Mobile Toggle Button (Visible only on small screens) */}
-            <button 
+            <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`sm:hidden fixed top-4 left-4 z-[60] bg-black p-2 rounded-md shadow-lg ${isOpen ? 'hidden' : ''}`}
+                className={`sm:hidden fixed top-4 left-4 z-[60] bg-black dark:bg-white p-2 rounded-md shadow-lg ${isOpen ? 'hidden' : ''}`}
             >
                 <div className='flex flex-col gap-1 w-5'>
-                    <span className={`h-0.5 bg-white transition-all ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-                    <span className={`h-0.5 bg-white transition-all ${isOpen ? 'opacity-0' : ''}`}></span>
-                    <span className={`h-0.5 bg-white transition-all ${isOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+                    <span className={`h-0.5 bg-white dark:bg-black transition-all ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+                    <span className={`h-0.5 bg-white dark:bg-black transition-all ${isOpen ? 'opacity-0' : ''}`}></span>
+                    <span className={`h-0.5 bg-white dark:bg-black transition-all ${isOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
                 </div>
             </button>
 
             {/* Overlay for mobile (closes menu when clicking outside) */}
             {isOpen && (
-                <div 
+                <div
                     className='fixed inset-0 bg-black/20 backdrop-blur-sm z-[40] sm:hidden'
                     onClick={() => setIsOpen(false)}
                 />
@@ -85,17 +86,19 @@ const Sidebar = () => {
             {/* Sidebar Container */}
             <div className={`
                 fixed sm:sticky inset-y-0 sm:inset-y-auto left-0 sm:top-0 z-50
-                flex flex-col bg-white border-r border-gray-100 h-screen overflow-y-auto
+                flex flex-col bg-white dark:bg-gray-950 border-r border-gray-100 dark:border-gray-800 h-screen overflow-y-auto
                 transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
                 sm:translate-x-0 w-72 sm:w-80
             `}>
-                
+
                 {/* Logo Section */}
-                <div className='px-6 py-6 sm:pl-12 border-b border-gray-100 flex items-center justify-between'>
+                <div className='px-6 py-6 sm:pl-12 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between'>
                     <Link href='/' onClick={() => setIsOpen(false)}>
-                        <Image src={assets.logo} width={130} alt='Logo' className='transition-opacity hover:opacity-80' />
+                        <Image src={assets.logo} width={130} alt='Logo' className='transition-opacity hover:opacity-80 dark:hidden' />
+                        <Image src={assets.logo_light} width={130} alt='Logo' className='transition-opacity hover:opacity-80 hidden dark:block' />
                     </Link>
+                    <ThemeToggle />
                 </div>
 
                 {/* Navigation Container */}
@@ -110,22 +113,22 @@ const Sidebar = () => {
                                     href={item.href} 
                                     onClick={() => setIsOpen(false)} // Closes menu on click
                                     className={`flex items-center gap-4 px-4 py-3.5 rounded-l-full sm:rounded-l-full rounded-r-full sm:rounded-r-none transition-all duration-200 group
-                                        ${isActive 
-                                            ? 'bg-black text-white shadow-lg shadow-black/10' 
-                                            : 'text-gray-500 hover:bg-gray-50 hover:text-black'
+                                        ${isActive
+                                            ? 'bg-black dark:bg-white text-white dark:text-black shadow-lg shadow-black/10'
+                                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 hover:text-black dark:hover:text-white'
                                         }`}
                                 >
-                                    <div className={`p-1 rounded-md ${isActive ? 'bg-white/20' : 'bg-transparent'}`}>
+                                    <div className={`p-1 rounded-md ${isActive ? 'bg-white/20 dark:bg-black/10' : 'bg-transparent'}`}>
                                         {item.isDashboard ? (
-                                            <DashboardIcon className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-black'} />
+                                            <DashboardIcon className={isActive ? 'text-white dark:text-black' : 'text-gray-400 dark:text-gray-500 group-hover:text-black dark:group-hover:text-white'} />
                                         ) : item.isUsers ? (
-                                            <UsersIcon className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-black'} />
+                                            <UsersIcon className={isActive ? 'text-white dark:text-black' : 'text-gray-400 dark:text-gray-500 group-hover:text-black dark:group-hover:text-white'} />
                                         ) : (
                                             <Image
                                                 src={item.icon}
                                                 alt=''
                                                 width={20}
-                                                className={`${isActive ? 'invert' : 'opacity-60 group-hover:opacity-100'}`}
+                                                className={`${isActive ? 'invert dark:invert-0' : 'opacity-60 group-hover:opacity-100 dark:invert'}`}
                                             />
                                         )}
                                     </div>
@@ -140,21 +143,21 @@ const Sidebar = () => {
                 
                 {/* Bottom: Quick Stats + Live Site Link */}
                 <div className='mt-auto p-8'>
-                    <div className='p-4 bg-gray-50 rounded-2xl'>
-                        <p className='text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-3'>Quick Stats</p>
+                    <div className='p-4 bg-gray-50 dark:bg-gray-900 rounded-2xl'>
+                        <p className='text-[10px] uppercase tracking-widest text-gray-400 dark:text-gray-500 font-bold mb-3'>Quick Stats</p>
                         <div className='flex gap-3 mb-4'>
                             <div className='flex-1'>
-                                <p className='text-xl font-bold text-gray-900'>{stats.blogs}</p>
-                                <p className='text-[10px] text-gray-400 uppercase tracking-wider'>Posts</p>
+                                <p className='text-xl font-bold text-gray-900 dark:text-white'>{stats.blogs}</p>
+                                <p className='text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider'>Posts</p>
                             </div>
                             <div className='flex-1'>
-                                <p className='text-xl font-bold text-gray-900'>{stats.subs}</p>
-                                <p className='text-[10px] text-gray-400 uppercase tracking-wider'>Subscribers</p>
+                                <p className='text-xl font-bold text-gray-900 dark:text-white'>{stats.subs}</p>
+                                <p className='text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider'>Subscribers</p>
                             </div>
                         </div>
                         <Link
                             href='/'
-                            className='block text-center text-[11px] font-bold bg-white border border-gray-200 rounded-xl py-2.5 hover:bg-black hover:text-white hover:border-black transition-all'
+                            className='block text-center text-[11px] font-bold bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black hover:border-black dark:hover:border-white transition-all'
                         >
                             View Live Site ↗
                         </Link>

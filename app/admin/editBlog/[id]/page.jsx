@@ -76,8 +76,8 @@ const Page = ({ params }) => {
 
     if (loading || !data) {
         return (
-            <div className='flex items-center justify-center min-h-screen bg-[#fcfcfc]'>
-                <p className='text-gray-400 font-medium'>Loading blog...</p>
+            <div className='flex items-center justify-center min-h-screen bg-[#fcfcfc] dark:bg-gray-950'>
+                <p className='text-gray-400 dark:text-gray-500 font-medium'>Loading blog...</p>
             </div>
         );
     }

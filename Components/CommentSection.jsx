@@ -30,14 +30,14 @@ const CommentComposer = ({ value, onChange, onSubmit, submitting, placeholder, a
             autoFocus={autoFocus}
             rows={2}
             maxLength={2000}
-            className='w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-black transition-all text-sm resize-none'
+            className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-gray-900 dark:text-gray-100 outline-none focus:border-black dark:focus:border-white transition-all text-sm resize-none'
         />
         <div className='flex gap-2 justify-end'>
             {onCancel && (
                 <button
                     type='button'
                     onClick={onCancel}
-                    className='px-4 py-2 text-xs font-bold text-gray-500 rounded-xl hover:bg-gray-100 transition-all'
+                    className='px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all'
                 >
                     Cancel
                 </button>
@@ -46,7 +46,7 @@ const CommentComposer = ({ value, onChange, onSubmit, submitting, placeholder, a
                 type='button'
                 onClick={onSubmit}
                 disabled={submitting || !value.trim()}
-                className='px-5 py-2 text-xs font-bold text-white bg-black rounded-xl hover:bg-gray-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed'
+                className='px-5 py-2 text-xs font-bold text-white dark:text-black bg-black dark:bg-white rounded-xl hover:bg-gray-800 dark:hover:bg-gray-200 transition-all disabled:opacity-40 disabled:cursor-not-allowed'
             >
                 {submitting ? 'Posting...' : 'Comment'}
             </button>
@@ -74,13 +74,13 @@ const CommentRow = ({ comment, canEdit, canDelete, allowComments, isReply, onEdi
                 src={comment.user?.image}
                 name={comment.user?.name}
                 size={isReply ? 28 : 36}
-                className='border border-gray-100'
+                className='border border-gray-100 dark:border-gray-800'
             />
             <div className='flex-1 min-w-0'>
                 <div className='flex items-baseline gap-2 flex-wrap'>
-                    <p className='text-sm font-bold text-gray-900'>{comment.user?.name || 'Deleted user'}</p>
-                    <p className='text-xs text-gray-400'>{timeAgo(comment.createdAt)}</p>
-                    {comment.edited && <p className='text-xs text-gray-300 italic'>Edited</p>}
+                    <p className='text-sm font-bold text-gray-900 dark:text-white'>{comment.user?.name || 'Deleted user'}</p>
+                    <p className='text-xs text-gray-400 dark:text-gray-500'>{timeAgo(comment.createdAt)}</p>
+                    {comment.edited && <p className='text-xs text-gray-300 dark:text-gray-600 italic'>Edited</p>}
                 </div>
 
                 {editing ? (
@@ -94,7 +94,7 @@ const CommentRow = ({ comment, canEdit, canDelete, allowComments, isReply, onEdi
                         />
                     </div>
                 ) : (
-                    <p className='text-sm text-gray-700 mt-1 whitespace-pre-wrap break-words'>{comment.content}</p>
+                    <p className='text-sm text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap break-words'>{comment.content}</p>
                 )}
 
                 {!editing && (
@@ -110,7 +110,7 @@ const CommentRow = ({ comment, canEdit, canDelete, allowComments, isReply, onEdi
                             <button
                                 type='button'
                                 onClick={() => onReply(comment._id)}
-                                className='text-xs font-bold text-gray-400 hover:text-gray-700 transition-colors'
+                                className='text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 transition-colors'
                             >
                                 {replyOpen ? 'Cancel' : 'Reply'}
                             </button>
@@ -119,7 +119,7 @@ const CommentRow = ({ comment, canEdit, canDelete, allowComments, isReply, onEdi
                             <button
                                 type='button'
                                 onClick={() => setEditing(true)}
-                                className='text-xs font-bold text-gray-400 hover:text-gray-700 transition-colors'
+                                className='text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 transition-colors'
                             >
                                 Edit
                             </button>
@@ -128,7 +128,7 @@ const CommentRow = ({ comment, canEdit, canDelete, allowComments, isReply, onEdi
                             <button
                                 type='button'
                                 onClick={() => setConfirmingDelete(true)}
-                                className='text-xs font-bold text-gray-400 hover:text-red-500 transition-colors'
+                                className='text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors'
                             >
                                 Delete
                             </button>
@@ -231,8 +231,8 @@ const CommentSection = ({ postId, allowComments, postOwnerId }) => {
     const isPostOwner = postOwnerId && session?.user?.id === String(postOwnerId);
 
     return (
-        <div className='mt-20 pt-10 border-t border-gray-100'>
-            <h3 className='text-lg font-bold text-gray-900 mb-6'>Comments ({comments.length})</h3>
+        <div className='mt-8 pt-8 border-t border-gray-100 dark:border-gray-800'>
+            <h3 className='text-lg font-bold text-gray-900 dark:text-white mb-6'>Comments ({comments.length})</h3>
 
             {allowComments ? (
                 session ? (
@@ -246,18 +246,18 @@ const CommentSection = ({ postId, allowComments, postOwnerId }) => {
                         />
                     </div>
                 ) : (
-                    <p className='text-sm text-gray-500 mb-10'>
-                        <Link href='/login' className='font-bold text-black hover:underline'>Log in</Link> to join the conversation.
+                    <p className='text-sm text-gray-500 dark:text-gray-400 mb-10'>
+                        <Link href='/login' className='font-bold text-black dark:text-white hover:underline'>Log in</Link> to join the conversation.
                     </p>
                 )
             ) : (
-                <p className='text-sm text-gray-400 italic mb-10'>Comments are closed for this post.</p>
+                <p className='text-sm text-gray-400 dark:text-gray-500 italic mb-10'>Comments are closed for this post.</p>
             )}
 
             {loading ? (
-                <p className='text-sm text-gray-400 italic'>Loading comments...</p>
+                <p className='text-sm text-gray-400 dark:text-gray-500 italic'>Loading comments...</p>
             ) : topLevel.length === 0 ? (
-                <p className='text-sm text-gray-400 italic'>No comments yet.</p>
+                <p className='text-sm text-gray-400 dark:text-gray-500 italic'>No comments yet.</p>
             ) : (
                 <div className='flex flex-col gap-8'>
                     {topLevel.map((comment) => {

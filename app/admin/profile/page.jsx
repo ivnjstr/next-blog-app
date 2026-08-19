@@ -100,47 +100,47 @@ const Page = () => {
 
     if (loading) {
         return (
-            <div className='flex items-center justify-center min-h-screen bg-[#fcfcfc]'>
-                <p className='text-gray-400 font-medium'>Loading profile...</p>
+            <div className='flex items-center justify-center min-h-screen bg-[#fcfcfc] dark:bg-gray-950'>
+                <p className='text-gray-400 dark:text-gray-500 font-medium'>Loading profile...</p>
             </div>
         );
     }
 
     return (
-        <div className='bg-[#fcfcfc] min-h-screen pb-20'>
+        <div className='bg-[#fcfcfc] dark:bg-gray-950 min-h-screen pb-20'>
             <form onSubmit={onSubmitHandler} className='pt-8 px-6 sm:pt-12 sm:pl-16 max-w-[600px]'>
 
                 <div className='mb-10'>
-                    <h1 className='text-2xl font-bold text-gray-900'>My Profile</h1>
-                    <p className='text-gray-500 text-sm mt-1'>Update your account details and password.</p>
+                    <h1 className='text-2xl font-bold text-gray-900 dark:text-white'>My Profile</h1>
+                    <p className='text-gray-500 dark:text-gray-400 text-sm mt-1'>Update your account details and password.</p>
                 </div>
 
                 {/* Avatar */}
                 <div className='flex flex-col items-center gap-3 mb-8'>
                     <label htmlFor="avatar" className='cursor-pointer group relative'>
-                        <div className="relative w-28 h-28 rounded-full border-2 border-dashed border-gray-200 overflow-hidden bg-white group-hover:border-black transition-all">
+                        <div className="relative w-28 h-28 rounded-full border-2 border-dashed border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-900 group-hover:border-black dark:group-hover:border-white transition-all">
                             <Avatar src={avatarPreview} name={profile.name} fill unoptimized={!!avatarFile} />
                         </div>
-                        <span className='absolute bottom-0 right-0 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-full'>EDIT</span>
+                        <span className='absolute bottom-0 right-0 bg-black dark:bg-white text-white dark:text-black text-[10px] font-bold px-2 py-1 rounded-full'>EDIT</span>
                     </label>
                     <input onChange={(e) => setAvatarFile(e.target.files[0])} type="file" id='avatar' accept="image/*" hidden />
                 </div>
 
                 {/* Fields */}
-                <div className='flex flex-col gap-6 bg-white p-8 rounded-2xl border border-gray-100 shadow-sm'>
+                <div className='flex flex-col gap-6 bg-white dark:bg-gray-900 p-8 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm'>
 
                     <div>
                         <div className='flex items-center justify-between mb-2'>
-                            <p className='text-sm font-bold text-gray-700'>Role</p>
-                            <span className='text-[10px] font-bold uppercase tracking-widest bg-black text-white px-3 py-1 rounded-full'>{profile.role}</span>
+                            <p className='text-sm font-bold text-gray-700 dark:text-gray-300'>Role</p>
+                            <span className='text-[10px] font-bold uppercase tracking-widest bg-black dark:bg-white text-white dark:text-black px-3 py-1 rounded-full'>{profile.role}</span>
                         </div>
-                        <p className='text-xs text-gray-400'>Your role can&apos;t be changed from here.</p>
+                        <p className='text-xs text-gray-400 dark:text-gray-500'>Your role can&apos;t be changed from here.</p>
                     </div>
 
                     <div>
-                        <p className='text-sm font-bold text-gray-700 mb-2'>Name</p>
+                        <p className='text-sm font-bold text-gray-700 dark:text-gray-300 mb-2'>Name</p>
                         <input
-                            className='w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-black transition-all'
+                            className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-gray-900 dark:text-gray-100 outline-none focus:border-black dark:focus:border-white transition-all'
                             type="text"
                             value={profile.name}
                             onChange={(e) => setProfile(p => ({ ...p, name: e.target.value }))}
@@ -149,38 +149,38 @@ const Page = () => {
                     </div>
 
                     <div>
-                        <p className='text-sm font-bold text-gray-700 mb-2'>Email</p>
+                        <p className='text-sm font-bold text-gray-700 dark:text-gray-300 mb-2'>Email</p>
                         <input
-                            className='w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-black transition-all'
+                            className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-gray-900 dark:text-gray-100 outline-none focus:border-black dark:focus:border-white transition-all'
                             type="email"
                             value={profile.email}
                             onChange={(e) => setProfile(p => ({ ...p, email: e.target.value }))}
                             required
                         />
-                        <p className='text-xs text-gray-400 mt-2'>Changing this changes the email you log in with.</p>
+                        <p className='text-xs text-gray-400 dark:text-gray-500 mt-2'>Changing this changes the email you log in with.</p>
                     </div>
 
-                    <div className='pt-4 border-t border-gray-100'>
-                        <p className='text-sm font-bold text-gray-700 mb-1'>Change Password</p>
-                        <p className='text-xs text-gray-400 mb-4'>Leave blank to keep your current password.</p>
+                    <div className='pt-4 border-t border-gray-100 dark:border-gray-800'>
+                        <p className='text-sm font-bold text-gray-700 dark:text-gray-300 mb-1'>Change Password</p>
+                        <p className='text-xs text-gray-400 dark:text-gray-500 mb-4'>Leave blank to keep your current password.</p>
 
                         <div className='flex flex-col gap-4'>
                             <input
-                                className='w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-black transition-all'
+                                className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-gray-900 dark:text-gray-100 outline-none focus:border-black dark:focus:border-white transition-all'
                                 type="password"
                                 placeholder='Current password'
                                 value={passwords.current}
                                 onChange={(e) => setPasswords(p => ({ ...p, current: e.target.value }))}
                             />
                             <input
-                                className='w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-black transition-all'
+                                className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-gray-900 dark:text-gray-100 outline-none focus:border-black dark:focus:border-white transition-all'
                                 type="password"
                                 placeholder='New password'
                                 value={passwords.next}
                                 onChange={(e) => setPasswords(p => ({ ...p, next: e.target.value }))}
                             />
                             <input
-                                className='w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-black transition-all'
+                                className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-gray-900 dark:text-gray-100 outline-none focus:border-black dark:focus:border-white transition-all'
                                 type="password"
                                 placeholder='Confirm new password'
                                 value={passwords.confirm}
@@ -189,23 +189,23 @@ const Page = () => {
                         </div>
                     </div>
 
-                    <label className='flex items-start gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-black transition-all'>
+                    <label className='flex items-start gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer hover:border-black dark:hover:border-white transition-all'>
                         <input
                             type="checkbox"
                             checked={!!profile.defaultAllowComments}
                             onChange={(e) => setProfile(p => ({ ...p, defaultAllowComments: e.target.checked }))}
-                            className='mt-0.5 w-4 h-4 accent-black cursor-pointer'
+                            className='mt-0.5 w-4 h-4 accent-black dark:accent-white cursor-pointer'
                         />
                         <span>
-                            <span className='block text-sm font-bold text-gray-700'>Allow comments on new posts</span>
-                            <span className='block text-xs text-gray-400 mt-0.5'>This sets the default for posts you create from now on — it won&apos;t change posts you&apos;ve already published. You can still override it per post.</span>
+                            <span className='block text-sm font-bold text-gray-700 dark:text-gray-300'>Allow comments on new posts</span>
+                            <span className='block text-xs text-gray-400 dark:text-gray-500 mt-0.5'>This sets the default for posts you create from now on — it won&apos;t change posts you&apos;ve already published. You can still override it per post.</span>
                         </span>
                     </label>
 
                     <button
                         type='submit'
                         disabled={saving}
-                        className='mt-2 w-full sm:w-40 py-4 bg-black text-white font-bold rounded-xl hover:bg-gray-800 active:scale-95 transition-all shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed'
+                        className='mt-2 w-full sm:w-40 py-4 bg-black dark:bg-white text-white dark:text-black font-bold rounded-xl hover:bg-gray-800 dark:hover:bg-gray-200 active:scale-95 transition-all shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                         {saving ? 'SAVING...' : 'SAVE CHANGES'}
                     </button>
@@ -213,13 +213,13 @@ const Page = () => {
             </form>
 
             <div className='pt-8 px-6 sm:pl-16 max-w-[600px]'>
-                <div className='flex flex-col gap-4 bg-white p-8 rounded-2xl border border-red-100 shadow-sm'>
+                <div className='flex flex-col gap-4 bg-white dark:bg-gray-900 p-8 rounded-2xl border border-red-100 dark:border-red-900/50 shadow-sm'>
                     <div>
-                        <p className='text-sm font-bold text-red-600'>Danger Zone</p>
-                        <p className='text-xs text-gray-400 mt-1'>Deleting your account permanently removes it and every post you&apos;ve written. This can&apos;t be undone.</p>
+                        <p className='text-sm font-bold text-red-600 dark:text-red-400'>Danger Zone</p>
+                        <p className='text-xs text-gray-400 dark:text-gray-500 mt-1'>Deleting your account permanently removes it and every post you&apos;ve written. This can&apos;t be undone.</p>
                     </div>
                     <input
-                        className='w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-black transition-all'
+                        className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-gray-900 dark:text-gray-100 outline-none focus:border-black dark:focus:border-white transition-all'
                         type="password"
                         placeholder='Enter your password to confirm'
                         value={deletePassword}

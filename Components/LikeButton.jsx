@@ -62,7 +62,7 @@ const LikeButton = ({ targetType, targetId, initialLiked = false, initialCount =
         <button
             type="button"
             onClick={toggle}
-            className={`inline-flex items-center gap-1.5 ${textSize} font-semibold transition-colors ${liked ? 'text-red-500' : 'text-gray-400 hover:text-gray-600'}`}
+            className={`inline-flex items-center gap-1.5 ${textSize} font-semibold transition-colors ${liked ? 'text-red-500' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'}`}
         >
             <HeartIcon filled={liked} className={`transition-transform ${liked ? 'scale-110' : 'scale-100'}`} />
             {count}

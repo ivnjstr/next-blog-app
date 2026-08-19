@@ -1,4 +1,3 @@
-import { blog_data } from '@/Assets/assets'
 import React, { useEffect, useState } from 'react'
 import BlogItem from './BlogItem'
 import axios from 'axios';
@@ -23,11 +22,11 @@ const BlogList = () => {
         <div className="max-w-7xl mx-auto px-4">
             {/* Category Filter */}
             <div className='flex justify-center gap-6 my-10 font-medium'>
-                {["All", "Technology", "Startup", "Lifestyle"].map((cat) => (
-                    <button 
+                {["All", "Technology", "Startup", "Lifestyle", "Travel"].map((cat) => (
+                    <button
                         key={cat}
-                        onClick={() => setMenu(cat)} 
-                        className={menu === cat ? 'text-black border-b-2 border-black pb-1' : 'text-gray-500 hover:text-black transition-all'}
+                        onClick={() => setMenu(cat)}
+                        className={menu === cat ? 'text-black dark:text-white border-b-2 border-black dark:border-white pb-1' : 'text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all'}
                     >
                         {cat}
                     </button>
@@ -37,7 +36,7 @@ const BlogList = () => {
             {/* Flexbox Container */}
             <div className='flex flex-wrap -mx-3 mb-16'>
                 {loading ? (
-                    <p className="text-center w-full">Loading blogs...</p>
+                    <p className="text-center w-full text-gray-500 dark:text-gray-400">Loading blogs...</p>
                 ) : (
                     blogs
                         .filter((item) => menu === "All" ? true : item.category === menu)
